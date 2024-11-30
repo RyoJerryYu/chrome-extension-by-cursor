@@ -222,6 +222,22 @@ export default function Popup() {
           >
             Add Task
           </Button>
+          <Button
+            startIcon={<AttachFileIcon />}
+            variant="outlined"
+            onClick={handleFileClick}
+            disabled={isLoading}
+            fullWidth
+          >
+            Files
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+            multiple
+          />
         </Stack>
 
         {/* Main Content */}
@@ -235,58 +251,37 @@ export default function Popup() {
           fullWidth
         />
 
-        {/* File Upload Section */}
-        <Paper variant="outlined" sx={{ p: 1 }}>
-          <Stack spacing={1}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileSelect}
-                style={{ display: 'none' }}
-                multiple
-              />
-              <Button
-                startIcon={<AttachFileIcon />}
-                variant="text"
-                onClick={handleFileClick}
-                disabled={isLoading}
-                fullWidth
-              >
-                Attach Files
-              </Button>
-            </Stack>
-
-            {selectedFiles.length > 0 && (
-              <List dense sx={{ 
-                maxHeight: 100, 
-                overflowY: 'auto',
-                bgcolor: 'grey.50',
-                borderRadius: 1
-              }}>
-                {selectedFiles.map((file, index) => (
-                  <ListItem key={index} sx={{ py: 0 }}>
-                    <ListItemText 
-                      primary={file.name}
-                      secondary={`${(file.size / 1024).toFixed(1)} KB`}
-                      primaryTypographyProps={{ variant: 'body2' }}
-                      secondaryTypographyProps={{ variant: 'caption' }}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        size="small"
-                        onClick={() => handleRemoveFile(index)}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </Stack>
-        </Paper>
+        {/* File List Section */}
+        {selectedFiles.length > 0 && (
+          <Paper variant="outlined" sx={{ p: 1 }}>
+            <List dense sx={{ 
+              maxHeight: 100, 
+              overflowY: 'auto',
+              bgcolor: 'grey.50',
+              borderRadius: 1
+            }}>
+              {selectedFiles.map((file, index) => (
+                <ListItem key={index} sx={{ py: 0 }}>
+                  <ListItemText 
+                    primary={file.name}
+                    secondary={`${(file.size / 1024).toFixed(1)} KB`}
+                    primaryTypographyProps={{ variant: 'body2' }}
+                    secondaryTypographyProps={{ variant: 'caption' }}
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      edge="end"
+                      size="small"
+                      onClick={() => handleRemoveFile(index)}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        )}
 
         {/* Submit Button */}
         <Button
