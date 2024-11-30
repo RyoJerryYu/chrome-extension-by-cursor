@@ -12,6 +12,13 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Fixed width classes */
+.popup-container {
+  padding: 1rem;
+  width: 400px;
+}
+
+/* Utility classes */
 .p-4 { padding: 1rem; }
 .mb-4 { margin-bottom: 1rem; }
 .mb-2 { margin-bottom: 0.5rem; }
@@ -20,4 +27,21 @@ button:disabled {
 .min-h-[100px] { min-height: 100px; }
 .rounded { border-radius: 0.25rem; }
 .text-xl { font-size: 1.25rem; }
-.font-bold { font-weight: bold; } 
+.font-bold { font-weight: bold; }
+
+/* Button states */
+.btn-primary {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  color: white;
+  background-color: #3b82f6;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+  background-color: #9ca3af;
+} 

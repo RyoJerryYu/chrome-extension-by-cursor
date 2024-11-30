@@ -25,7 +25,7 @@ export default function Popup() {
   };
 
   return (
-    <div className="p-4 w-[400px]">
+    <div className="popup-container">
       <h1 className="text-xl font-bold mb-4">Create Memo</h1>
       
       <form onSubmit={handleSubmit}>
@@ -40,11 +40,7 @@ export default function Popup() {
         <button
           type="submit"
           disabled={isLoading || !content.trim()}
-          className={`w-full p-2 rounded text-white ${
-            isLoading || !content.trim() 
-              ? 'bg-gray-400' 
-              : 'bg-blue-500 hover:bg-blue-600'
-          }`}
+          className="btn-primary"
         >
           {isLoading ? 'Creating...' : 'Create Memo'}
         </button>

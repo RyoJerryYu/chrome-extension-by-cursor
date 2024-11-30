@@ -1,17 +1,5 @@
-# Guide
+# proto
 
-## Prerequisites
+Files in `api` are copied from usememos/memos.
 
-- [buf](https://docs.buf.build/installation)
 
-## Generate
-
-```sh
-buf generate
-```
-
-## Format
-
-```sh
-buf format -w
-```
