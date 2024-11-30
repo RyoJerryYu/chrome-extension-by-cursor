@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.2",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@mui/icons-material": "^6.1.9",
+    "@mui/material": "^6.1.9",
     "@types/chrome": "^0.0.254",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

@@ -1,5 +1,13 @@
 import React from 'react';
-import './TagSelector.css';
+import { 
+  Box, 
+  Chip, 
+  Typography, 
+  Button,
+  Stack,
+  Paper 
+} from '@mui/material';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 interface TagSelectorProps {
   onSelectTag: (tag: string) => void;
@@ -19,17 +27,24 @@ export function TagSelector({ onSelectTag }: TagSelectorProps) {
   }
 
   return (
-    <div className="tag-selector">
-      {tags.map((tag) => (
-        <button
-          key={tag}
-          className="tag-button"
-          onClick={() => onSelectTag(tag)}
-          type="button"
-        >
-          {tag}
-        </button>
-      ))}
-    </div>
+    <Paper variant="outlined" sx={{ p: 1 }}>
+      <Stack spacing={1}>
+        <Typography variant="caption" color="text.secondary">
+          Saved Tags
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              size="small"
+              icon={<LocalOfferIcon />}
+              onClick={() => onSelectTag(tag)}
+              variant="outlined"
+            />
+          ))}
+        </Box>
+      </Stack>
+    </Paper>
   );
 } 
