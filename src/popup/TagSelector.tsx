@@ -16,10 +16,18 @@ interface ServerTag {
 }
 
 interface TagSelectorProps {
-  onSelectTag: (tag: string) => void;
+  textFieldRef: React.RefObject<HTMLTextAreaElement>;
+  content: string;
+  setContent: (content: string) => void;
+  disabled?: boolean;
 }
 
-export function TagSelector({ onSelectTag }: TagSelectorProps) {
+export function TagSelector({ 
+  textFieldRef,
+  content,
+  setContent,
+  disabled = false 
+}: TagSelectorProps) {
   const [localTags, setLocalTags] = React.useState<string[]>([]);
   const [serverTags, setServerTags] = React.useState<ServerTag[]>([]);
   const [isFetchingTags, setIsFetchingTags] = React.useState(false);
@@ -47,6 +55,33 @@ export function TagSelector({ onSelectTag }: TagSelectorProps) {
     }
   };
 
+  const handleTagSelect = (tag: string) => {
+    const inputTag = "#" + tag;
+    const textField = textFieldRef.current;
+    
+    if (textField) {
+      const startAt = textField.selectionStart;
+      const endAt = textField.selectionEnd;
+      let start = content.substring(0, startAt).trimEnd();
+      if (start.length !== 0) {
+        start += " ";
+      }
+      let end = content.substring(endAt).trimStart();
+      if (end.length !== 0) {
+        end = " " + end;
+      }
+      const newContent = start + inputTag + end;
+      const cursorAt = start.length + inputTag.length;
+      setContent(newContent);
+      setTimeout(() => {
+        textField.focus();
+        textField.setSelectionRange(cursorAt, cursorAt);
+      }, 0);
+    } else {
+      setContent(content + inputTag);
+    }
+  };
+
   if (localTags.length === 0 && serverTags.length === 0 && !isFetchingTags) {
     return null;
   }
@@ -61,7 +96,7 @@ export function TagSelector({ onSelectTag }: TagSelectorProps) {
           <Button
             size="small"
             onClick={handleFetchTags}
-            disabled={isFetchingTags}
+            disabled={isFetchingTags || disabled}
           >
             {isFetchingTags ? "Refreshing..." : "Fetch Server Tags"}
           </Button>
@@ -83,9 +118,10 @@ export function TagSelector({ onSelectTag }: TagSelectorProps) {
               label={tag}
               size="small"
               icon={<TagIcon />}
-              onClick={() => onSelectTag(tag.replace('#', ''))}
+              onClick={() => handleTagSelect(tag.replace('#', ''))}
               variant="outlined"
               color="primary"
+              disabled={disabled}
             />
           ))}
           {/* Server Tags */}
@@ -97,9 +133,10 @@ export function TagSelector({ onSelectTag }: TagSelectorProps) {
                 label={`${name} (${count})`}
                 size="small"
                 icon={<TagIcon />}
-                onClick={() => onSelectTag(name.replace('#', ''))}
+                onClick={() => handleTagSelect(name.replace('#', ''))}
                 variant="outlined"
                 sx={{ opacity: isLocal ? 0.6 : 1 }}
+                disabled={disabled}
               />
             );
           })}

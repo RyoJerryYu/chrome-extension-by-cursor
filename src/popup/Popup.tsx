@@ -22,45 +22,18 @@ import { SuccessMessage } from "./SuccessMessage";
 
 export default function Popup() {
   const [content, setContent] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
   const handleFilesSelected = (files: File[]) => {
-    setSelectedFiles((prev) => [...prev, ...files]);
-  };
-
-  const handleTagSelect = (tag: string) => {
-    const inputTag = "#" + tag;
-    const textField = textFieldRef.current;
-
-    if (textField) {
-      const startAt = textField.selectionStart;
-      const endAt = textField.selectionEnd;
-      let start = content.substring(0, startAt).trimEnd();
-      if (start.length !== 0) {
-        start += " ";
-      }
-      let end = content.substring(endAt).trimStart();
-      if (end.length !== 0) {
-        end = " " + end;
-      }
-      const newContent = start + inputTag + end;
-      const cursorAt = start.length + inputTag.length;
-      setContent(newContent);
-      setTimeout(() => {
-        textField.focus();
-        textField.setSelectionRange(cursorAt, cursorAt);
-      }, 0);
-    } else {
-      setContent(content + inputTag);
-    }
+    setSelectedFiles(prev => [...prev, ...files]);
   };
 
   const handleRemoveFile = (index: number) => {
-    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmitStart = () => {
@@ -123,20 +96,22 @@ export default function Popup() {
           </Stack>
         </Paper>
 
-        <TagSelector onSelectTag={handleTagSelect} />
+        <TagSelector
+          textFieldRef={textFieldRef}
+          content={content}
+          setContent={setContent}
+          disabled={isLoading}
+        />
 
         {/* File List Section */}
         {selectedFiles.length > 0 && (
           <Paper variant="outlined" sx={{ p: 1 }}>
-            <List
-              dense
-              sx={{
-                maxHeight: 200,
-                overflowY: "auto",
-                bgcolor: "grey.50",
-                borderRadius: 1,
-              }}
-            >
+            <List dense sx={{ 
+              maxHeight: 200,
+              overflowY: 'auto',
+              bgcolor: 'grey.50',
+              borderRadius: 1
+            }}>
               {selectedFiles.map((file, index) => (
                 <FileItem
                   key={index}
