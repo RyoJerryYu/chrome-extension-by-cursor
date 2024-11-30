@@ -60,7 +60,6 @@ export default function Options() {
       await chrome.storage.sync.set({
         endpoint: endpoint.trim(),
         token: token.trim(),
-        tags,
       });
       resetMemosClient();
       setStatus({ message: "Settings saved successfully!", type: "success" });
@@ -71,16 +70,34 @@ export default function Options() {
     setTimeout(() => setStatus(null), 3000);
   };
 
-  const handleAddTag = (e: React.FormEvent) => {
+  const handleAddTag = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
+      const updatedTags = [...tags, newTag.trim()];
+      setTags(updatedTags);
       setNewTag("");
+      
+      try {
+        await chrome.storage.sync.set({ tags: updatedTags });
+        setStatus({ message: "Tag added successfully!", type: "success" });
+      } catch (err) {
+        setStatus({ message: "Failed to save tag", type: "error" });
+      }
+      setTimeout(() => setStatus(null), 1500);
     }
   };
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+  const handleRemoveTag = async (tagToRemove: string) => {
+    const updatedTags = tags.filter((tag) => tag !== tagToRemove);
+    setTags(updatedTags);
+    
+    try {
+      await chrome.storage.sync.set({ tags: updatedTags });
+      setStatus({ message: "Tag removed successfully!", type: "success" });
+    } catch (err) {
+      setStatus({ message: "Failed to remove tag", type: "error" });
+    }
+    setTimeout(() => setStatus(null), 1500);
   };
 
   const handleFetchTags = async () => {
@@ -101,10 +118,17 @@ export default function Options() {
     }
   };
 
-  const handleImportTag = (tagName: string) => {
+  const handleImportTag = async (tagName: string) => {
     if (!tags.includes(tagName)) {
-      setTags([...tags, tagName]);
-      setStatus({ message: `Added tag: ${tagName}`, type: "success" });
+      const updatedTags = [...tags, tagName];
+      setTags(updatedTags);
+      
+      try {
+        await chrome.storage.sync.set({ tags: updatedTags });
+        setStatus({ message: `Added tag: ${tagName}`, type: "success" });
+      } catch (err) {
+        setStatus({ message: "Failed to import tag", type: "error" });
+      }
       setTimeout(() => setStatus(null), 1500);
     }
   };
@@ -147,7 +171,12 @@ export default function Options() {
               </Stack>
             </Paper>
 
-            {/* Tags Management */}
+            {/* Save Settings Button - Moved here */}
+            <Button type="submit" variant="contained" size="large">
+              Save Settings
+            </Button>
+
+            {/* Tags Management Section */}
             <Paper variant="outlined" sx={{ p: 2 }}>
               <Stack spacing={2}>
                 <Typography variant="subtitle2" color="text.secondary">
@@ -244,10 +273,6 @@ export default function Options() {
                 </Box>
               </Stack>
             </Paper>
-
-            <Button type="submit" variant="contained" size="large">
-              Save Settings
-            </Button>
           </Stack>
         </form>
 
