@@ -4,7 +4,8 @@
   "description": "Chrome Extension with React",
   "scripts": {
     "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch"
+    "dev": "webpack --mode development --watch",
+    "generate-icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -23,6 +24,7 @@
     "@babel/preset-typescript": "^7.23.0",
     "babel-loader": "^9.1.3",
     "html-webpack-plugin": "^5.5.3",
-    "copy-webpack-plugin": "^11.0.0"
+    "copy-webpack-plugin": "^11.0.0",
+    "sharp": "^0.32.6"
   }
 } 
