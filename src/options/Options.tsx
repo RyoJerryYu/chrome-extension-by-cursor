@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { 
+import React, { useEffect, useState } from "react";
+import {
   Box,
   Container,
   Typography,
@@ -12,15 +12,15 @@ import {
   Alert,
   InputAdornment,
   Divider,
-} from '@mui/material';
-import { 
+} from "@mui/material";
+import {
   Add as AddIcon,
   Close as CloseIcon,
   Tag as TagIcon,
   Refresh as RefreshIcon,
-} from '@mui/icons-material';
-import { resetMemosClient } from '../grpc/client';
-import { memoService } from '../services/memoService';
+} from "@mui/icons-material";
+import { resetMemosClient } from "../grpc/client";
+import { memoService } from "../services/memoService";
 
 interface Settings {
   endpoint: string;
@@ -34,35 +34,38 @@ interface TagWithCount {
 }
 
 export default function Options() {
-  const [endpoint, setEndpoint] = useState('');
-  const [token, setToken] = useState('');
+  const [endpoint, setEndpoint] = useState("");
+  const [token, setToken] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
-  const [status, setStatus] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [newTag, setNewTag] = useState("");
+  const [status, setStatus] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
   const [fetchedTags, setFetchedTags] = useState<TagWithCount[]>([]);
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    chrome.storage.sync.get(['endpoint', 'token', 'tags'], (result) => {
-      setEndpoint(result.endpoint || 'http://localhost:5230');
-      setToken(result.token || '');
+    chrome.storage.sync.get(["endpoint", "token", "tags"], (result) => {
+      setEndpoint(result.endpoint || "http://localhost:5230");
+      setToken(result.token || "");
       setTags(result.tags || []);
     });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await chrome.storage.sync.set({
         endpoint: endpoint.trim(),
         token: token.trim(),
-        tags
+        tags,
       });
       resetMemosClient();
-      setStatus({ message: 'Settings saved successfully!', type: 'success' });
+      setStatus({ message: "Settings saved successfully!", type: "success" });
     } catch (err) {
-      setStatus({ message: 'Failed to save settings', type: 'error' });
+      setStatus({ message: "Failed to save settings", type: "error" });
     }
 
     setTimeout(() => setStatus(null), 3000);
@@ -72,12 +75,12 @@ export default function Options() {
     e.preventDefault();
     if (newTag.trim() && !tags.includes(newTag.trim())) {
       setTags([...tags, newTag.trim()]);
-      setNewTag('');
+      setNewTag("");
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleFetchTags = async () => {
@@ -89,9 +92,9 @@ export default function Options() {
         .sort((a, b) => b.count - a.count);
       setFetchedTags(tagList);
     } catch (err) {
-      setStatus({ 
-        message: err instanceof Error ? err.message : 'Failed to fetch tags', 
-        type: 'error' 
+      setStatus({
+        message: err instanceof Error ? err.message : "Failed to fetch tags",
+        type: "error",
       });
     } finally {
       setIsFetching(false);
@@ -101,7 +104,7 @@ export default function Options() {
   const handleImportTag = (tagName: string) => {
     if (!tags.includes(tagName)) {
       setTags([...tags, tagName]);
-      setStatus({ message: `Added tag: ${tagName}`, type: 'success' });
+      setStatus({ message: `Added tag: ${tagName}`, type: "success" });
       setTimeout(() => setStatus(null), 1500);
     }
   };
@@ -151,7 +154,7 @@ export default function Options() {
                   Tags Management
                 </Typography>
 
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                   {tags.map((tag) => (
                     <Chip
                       key={tag}
@@ -173,7 +176,7 @@ export default function Options() {
                     ),
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton 
+                        <IconButton
                           onClick={handleAddTag}
                           disabled={!newTag.trim()}
                           size="small"
@@ -184,74 +187,73 @@ export default function Options() {
                     ),
                   }}
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault();
                       handleAddTag(e);
                     }
                   }}
                 />
-              </Stack>
-            </Paper>
 
-            {/* Server Tags */}
-            <Paper variant="outlined" sx={{ p: 2 }}>
-              <Stack spacing={2}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <TagIcon color="action" />
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Server Tags
-                  </Typography>
-                  <Box sx={{ flex: 1 }} />
-                  <Button
-                    startIcon={<RefreshIcon />}
-                    onClick={handleFetchTags}
-                    disabled={isFetching}
-                    size="small"
-                  >
-                    {isFetching ? "Fetching..." : "Fetch Tags"}
-                  </Button>
-                </Box>
-
-                {fetchedTags.length > 0 && (
-                  <Box sx={{ 
-                    display: 'flex', 
-                    flexWrap: 'wrap', 
+                {/* Server Tags */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
                     gap: 0.5,
                     maxHeight: 200,
-                    overflowY: 'auto',
+                    overflowY: "auto",
                     p: 1,
-                    bgcolor: 'grey.50',
-                    borderRadius: 1
-                  }}>
-                    {fetchedTags.map(({name, count}) => (
-                      <Chip
-                        key={name}
-                        label={`${name} (${count})`}
-                        size="small"
-                        onClick={() => handleImportTag(name)}
-                        disabled={tags.includes(name)}
-                        variant="outlined"
-                        icon={<TagIcon />}
-                      />
-                    ))}
+                    bgcolor: "grey.50",
+                    borderRadius: 1,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <TagIcon color="action" />
+                    <Typography variant="subtitle2" color="text.secondary">
+                      Server Tags
+                    </Typography>
+                    <Box sx={{ flex: 1 }} />
+                    <IconButton
+                      onClick={handleFetchTags}
+                      disabled={isFetching}
+                      size="small"
+                    >
+                      <RefreshIcon />
+                    </IconButton>
                   </Box>
-                )}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 0.5,
+                    }}
+                  >
+                    {fetchedTags.length > 0 &&
+                      fetchedTags.map(({ name, count }) => (
+                        <Chip
+                          key={name}
+                          label={`${name} (${count})`}
+                          size="small"
+                          onClick={() => handleImportTag(name)}
+                          disabled={tags.includes(name)}
+                          variant="outlined"
+                          icon={<TagIcon />}
+                        />
+                      ))}
+                  </Box>
+                </Box>
               </Stack>
             </Paper>
 
-            <Button 
-              type="submit" 
-              variant="contained"
-              size="large"
-            >
+            <Button type="submit" variant="contained" size="large">
               Save Settings
             </Button>
           </Stack>
         </form>
 
         {status && (
-          <Alert 
-            severity={status.type} 
+          <Alert
+            severity={status.type}
             sx={{ mt: 2 }}
             onClose={() => setStatus(null)}
           >
@@ -261,4 +263,4 @@ export default function Options() {
       </Box>
     </Container>
   );
-} 
+}
