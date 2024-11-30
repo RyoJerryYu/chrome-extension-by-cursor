@@ -1,47 +1,67 @@
 import React, { useState } from 'react';
+import { memoService } from '../services/memoService';
+import { Memo } from '../../proto/src/proto/api/v1/memo_service';
 
-const Popup: React.FC = () => {
-  const [inputText, setInputText] = useState('');
+export default function Popup() {
+  const [content, setContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      const response = await fetch('http://example.com/api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          input: inputText,
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      
-      const data = await response.json();
-      console.log('Success:', data);
-    } catch (error) {
-      console.error('Error:', error);
+      const memo = await memoService.createMemo(content);
+      setCreatedMemo(memo);
+      setContent(''); // Clear input after successful creation
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create memo');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '16px', width: '300px' }}>
-      <textarea
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        style={{ width: '100%', height: '150px', marginBottom: '10px' }}
-        placeholder="Enter your text here..."
-      />
-      <button 
-        onClick={handleSubmit}
-        style={{ width: '100%', padding: '8px' }}
-      >
-        Submit
-      </button>
+    <div className="p-4 w-[400px]">
+      <h1 className="text-xl font-bold mb-4">Create Memo</h1>
+      
+      <form onSubmit={handleSubmit}>
+        <textarea
+          className="w-full p-2 border rounded mb-2 min-h-[100px]"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Enter your memo content..."
+          disabled={isLoading}
+        />
+        
+        <button
+          type="submit"
+          disabled={isLoading || !content.trim()}
+          className={`w-full p-2 rounded text-white ${
+            isLoading || !content.trim() 
+              ? 'bg-gray-400' 
+              : 'bg-blue-500 hover:bg-blue-600'
+          }`}
+        >
+          {isLoading ? 'Creating...' : 'Create Memo'}
+        </button>
+      </form>
+
+      {error && (
+        <div className="mt-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+
+      {createdMemo && (
+        <div className="mt-4 p-2 bg-green-100 border border-green-400 text-green-700 rounded">
+          <p>Memo created successfully!</p>
+          <p className="text-sm mt-1">ID: {createdMemo.name}</p>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Popup; 
+} 
