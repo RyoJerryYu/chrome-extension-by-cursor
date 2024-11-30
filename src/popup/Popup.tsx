@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Box, 
   Typography, 
@@ -32,6 +32,7 @@ export default function Popup() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [backendEndpoint, setBackendEndpoint] = useState("");
+  const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     chrome.storage.sync.get(['endpoint'], (result) => {
@@ -46,10 +47,11 @@ export default function Popup() {
 
   const handleTagSelect = (tag: string) => {
     const inputTag = "#" + tag;
-    const textarea = document.querySelector("textarea");
-    if (textarea) {
-      const startAt = textarea.selectionStart;
-      const endAt = textarea.selectionEnd;
+    const textField = textFieldRef.current;
+    
+    if (textField) {
+      const startAt = textField.selectionStart;
+      const endAt = textField.selectionEnd;
       let start = content.substring(0, startAt).trimEnd();
       if (start.length !== 0) {
         start += " ";
@@ -62,8 +64,8 @@ export default function Popup() {
       const cursorAt = start.length + inputTag.length;
       setContent(newContent);
       setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(cursorAt, cursorAt);
+        textField.focus();
+        textField.setSelectionRange(cursorAt, cursorAt);
       }, 0);
     } else {
       setContent(content + inputTag);
@@ -116,10 +118,10 @@ export default function Popup() {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab.url && tab.title) {
         const markdownLink = `[${tab.title}](${tab.url})`;
-        const textarea = document.querySelector("textarea");
-        if (textarea) {
-          const startAt = textarea.selectionStart;
-          const endAt = textarea.selectionEnd;
+        const textField = textFieldRef.current;
+        if (textField) {
+          const startAt = textField.selectionStart;
+          const endAt = textField.selectionEnd;
           let start = content.substring(0, startAt).trimEnd();
           if (start.length !== 0) {
             start += " ";
@@ -132,8 +134,8 @@ export default function Popup() {
           const cursorAt = start.length + markdownLink.length;
           setContent(newContent);
           setTimeout(() => {
-            textarea.focus();
-            textarea.setSelectionRange(cursorAt, cursorAt);
+            textField.focus();
+            textField.setSelectionRange(cursorAt, cursorAt);
           }, 0);
         } else {
           setContent(content + markdownLink);
@@ -151,9 +153,9 @@ export default function Popup() {
   };
 
   const insertTask = () => {
-    const textarea = document.querySelector("textarea");
-    if (textarea) {
-      const startAt = textarea.selectionStart;
+    const textField = textFieldRef.current;
+    if (textField) {
+      const startAt = textField.selectionStart;
       let start = content.substring(0, startAt).trimEnd();
       let end = content.substring(startAt).trimStart();
       
@@ -171,8 +173,8 @@ export default function Popup() {
       
       setContent(newContent);
       setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(cursorAt, cursorAt);
+        textField.focus();
+        textField.setSelectionRange(cursorAt, cursorAt);
       }, 0);
     } else {
       setContent(content + "- [ ] ");
@@ -195,6 +197,7 @@ export default function Popup() {
           placeholder="Enter your memo content..."
           disabled={isLoading}
           fullWidth
+          inputRef={textFieldRef}
         />
 
         {/* Action Buttons */}
