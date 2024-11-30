@@ -13,15 +13,13 @@ import {
 } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { memoService } from "../services/memoService";
-import { resourceService } from "../services/resourceService";
 import { Memo } from "../../proto/src/proto/api/v1/memo_service";
-import { Resource } from "../../proto/src/proto/api/v1/resource_service";
 import { TagSelector } from "./TagSelector";
 import { FileUploadButton } from "./FileUploadButton";
 import { FileItem } from "./FileItem";
 import { InsertPageButton } from "./InsertPageButton";
 import { InsertTaskButton } from "./InsertTaskButton";
+import { SubmitButton } from "./SubmitButton";
 
 export default function Popup() {
   const [content, setContent] = useState("");
@@ -29,7 +27,6 @@ export default function Popup() {
   const [error, setError] = useState<string | null>(null);
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
   const [backendEndpoint, setBackendEndpoint] = useState("");
   const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,7 +38,6 @@ export default function Popup() {
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(prev => [...prev, ...files]);
-    setError(null);
   };
 
   const handleTagSelect = (tag: string) => {
@@ -75,47 +71,29 @@ export default function Popup() {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // First create the memo
-      const memo = await memoService.createMemo(content);
-
-      // If there are files selected, upload them and attach to memo
-      if (selectedFiles.length > 0) {
-        setIsUploading(true);
-        try {
-          const resources: Resource[] = [];
-          for (const file of selectedFiles) {
-            const resource = await resourceService.createResource(file);
-            resources.push(resource);
-          }
-          await memoService.setMemoResources(memo.name, resources);
-        } catch (err) {
-          console.error('Failed to upload files:', err);
-          // Don't fail the whole operation if file upload fails
-        } finally {
-          setIsUploading(false);
-        }
-      }
-
-      setCreatedMemo(memo);
-      setContent("");
-      setSelectedFiles([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create memo");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleOpenMemo = (memo: Memo) => {
     const uid = memo.uid;
     const memoUrl = `${backendEndpoint}/m/${uid}`;
     window.open(memoUrl, '_blank');
+  };
+
+  const handleSubmitStart = () => {
+    setIsLoading(true);
+    setError(null);
+  };
+
+  const handleSubmitEnd = () => {
+    setIsLoading(false);
+  };
+
+  const handleSubmitSuccess = (memo: Memo) => {
+    setCreatedMemo(memo);
+    setContent("");
+    setSelectedFiles([]);
+  };
+
+  const handleSubmitError = (errorMessage: string) => {
+    setError(errorMessage);
   };
 
   return (
@@ -182,14 +160,15 @@ export default function Popup() {
         )}
 
         {/* Submit Button */}
-        <Button
-          variant="contained"
-          disabled={isLoading || !content.trim()}
-          onClick={handleSubmit}
-          fullWidth
-        >
-          {isLoading ? (isUploading ? "Uploading..." : "Creating...") : "Create Memo"}
-        </Button>
+        <SubmitButton
+          content={content}
+          selectedFiles={selectedFiles}
+          onSuccess={handleSubmitSuccess}
+          onError={handleSubmitError}
+          onSubmitStart={handleSubmitStart}
+          onSubmitEnd={handleSubmitEnd}
+          disabled={isLoading}
+        />
       </Stack>
 
       {/* Error Message */}
