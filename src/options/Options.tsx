@@ -53,7 +53,7 @@ export default function Options() {
   const handleAddTag = (e: React.FormEvent) => {
     e.preventDefault();
     if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, "#" + newTag.trim()]);
+      setTags([...tags, newTag.trim()]);
       setNewTag('');
     }
   };
@@ -134,7 +134,6 @@ export default function Options() {
             ))}
           </div>
           <div className="tag-input-container">
-            #
             <input
               type="text"
               value={newTag}

@@ -44,4 +44,61 @@ button:disabled {
 
 .btn-primary:disabled {
   background-color: #9ca3af;
+}
+
+.tags-section {
+  margin-bottom: 1rem;
+}
+
+.server-tags {
+  margin-top: 0.5rem;
+}
+
+.fetch-tags-button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fetch-tags-button:hover:not(:disabled) {
+  background-color: #4b5563;
+}
+
+.fetch-tags-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.server-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #f3f4f6;
+  border-radius: 0.25rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.server-tag {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.server-tag:hover {
+  background: #f8fafc;
+  border-color: #3b82f6;
 } 
