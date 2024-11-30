@@ -158,6 +158,37 @@ export default function Popup() {
     window.open(memoUrl, '_blank');
   };
 
+  const insertTask = () => {
+    const textarea = document.querySelector("textarea");
+    if (textarea) {
+      const startAt = textarea.selectionStart;
+      let start = content.substring(0, startAt).trimEnd();
+      let end = content.substring(startAt).trimStart();
+      
+      // Add newline before task if we're not at the start of content
+      if (start.length !== 0 && !start.endsWith('\n')) {
+        start += '\n';
+      }
+      
+      // Add newline after task if there's content after
+      if (end.length !== 0 && !end.startsWith('\n')) {
+        end = '\n' + end;
+      }
+      
+      const taskText = "- [ ] ";
+      const newContent = start + taskText + end;
+      const cursorAt = start.length + taskText.length;
+      
+      setContent(newContent);
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(cursorAt, cursorAt);
+      }, 0);
+    } else {
+      setContent(content + "- [ ] ");
+    }
+  };
+
   return (
     <div className="popup-container">
       <h1 className="text-xl font-bold mb-4">Create Memo</h1>
@@ -199,6 +230,13 @@ export default function Popup() {
           onClick={insertCurrentPage}
         >
           Insert Current Page
+        </button>
+        <button
+          type="button"
+          className="action-button"
+          onClick={insertTask}
+        >
+          Add Task
         </button>
       </div>
 
