@@ -9,13 +9,11 @@ import {
   Paper,
   Alert,
   AlertTitle,
-  Chip,
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import LinkIcon from '@mui/icons-material/Link';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
-import TagIcon from '@mui/icons-material/Tag';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import { memoService } from "../services/memoService";
@@ -24,18 +22,11 @@ import { Memo } from "../../proto/src/proto/api/v1/memo_service";
 import { Resource } from "../../proto/src/proto/api/v1/resource_service";
 import { TagSelector } from "./TagSelector";
 
-interface ServerTag {
-  name: string;
-  count: number;
-}
-
 export default function Popup() {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
-  const [serverTags, setServerTags] = useState<ServerTag[]>([]);
-  const [isFetchingTags, setIsFetchingTags] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,22 +61,6 @@ export default function Popup() {
       }, 0);
     } else {
       setContent(content + inputTag);
-    }
-  };
-
-  const handleFetchTags = async () => {
-    setIsFetchingTags(true);
-    setError(null);
-    try {
-      const tagAmounts = await memoService.listTags();
-      const tagList = Object.entries(tagAmounts)
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count);
-      setServerTags(tagList);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch tags");
-    } finally {
-      setIsFetchingTags(false);
     }
   };
 
@@ -216,45 +191,6 @@ export default function Popup() {
 
       <Stack spacing={2}>
         <TagSelector onSelectTag={handleTagSelect} />
-
-        {/* Server Tags Section */}
-        <Paper variant="outlined" sx={{ p: 1 }}>
-          <Stack spacing={1}>
-            <Button
-              startIcon={<TagIcon />}
-              onClick={handleFetchTags}
-              disabled={isFetchingTags}
-              variant="outlined"
-              fullWidth
-            >
-              {isFetchingTags ? "Fetching..." : "Fetch Server Tags"}
-            </Button>
-
-            {serverTags.length > 0 && (
-              <Box sx={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: 0.5,
-                maxHeight: 120,
-                overflowY: 'auto',
-                p: 1,
-                bgcolor: 'grey.50',
-                borderRadius: 1
-              }}>
-                {serverTags.map(({ name, count }) => (
-                  <Chip
-                    key={name}
-                    label={`${name} (${count})`}
-                    size="small"
-                    onClick={() => handleTagSelect(name)}
-                    variant="outlined"
-                    icon={<TagIcon />}
-                  />
-                ))}
-              </Box>
-            )}
-          </Stack>
-        </Paper>
 
         {/* Action Buttons */}
         <Stack direction="row" spacing={1}>
