@@ -1595,6 +1595,10 @@ export interface EnumValueOptions {
   debugRedact?:
     | boolean
     | undefined;
+  /** Information about the support window of a feature value. */
+  featureSupport?:
+    | FieldOptions_FeatureSupport
+    | undefined;
   /** The parser stores options it doesn't recognize here. See above. */
   uninterpretedOption: UninterpretedOption[];
 }
@@ -5547,7 +5551,13 @@ export const EnumOptions: MessageFns<EnumOptions> = {
 };
 
 function createBaseEnumValueOptions(): EnumValueOptions {
-  return { deprecated: false, features: undefined, debugRedact: false, uninterpretedOption: [] };
+  return {
+    deprecated: false,
+    features: undefined,
+    debugRedact: false,
+    featureSupport: undefined,
+    uninterpretedOption: [],
+  };
 }
 
 export const EnumValueOptions: MessageFns<EnumValueOptions> = {
@@ -5560,6 +5570,9 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
     }
     if (message.debugRedact !== undefined && message.debugRedact !== false) {
       writer.uint32(24).bool(message.debugRedact);
+    }
+    if (message.featureSupport !== undefined) {
+      FieldOptions_FeatureSupport.encode(message.featureSupport, writer.uint32(34).fork()).join();
     }
     for (const v of message.uninterpretedOption) {
       UninterpretedOption.encode(v!, writer.uint32(7994).fork()).join();
@@ -5598,6 +5611,14 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
           message.debugRedact = reader.bool();
           continue;
         }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.featureSupport = FieldOptions_FeatureSupport.decode(reader, reader.uint32());
+          continue;
+        }
         case 999: {
           if (tag !== 7994) {
             break;
@@ -5620,6 +5641,9 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
       deprecated: isSet(object.deprecated) ? globalThis.Boolean(object.deprecated) : false,
       features: isSet(object.features) ? FeatureSet.fromJSON(object.features) : undefined,
       debugRedact: isSet(object.debugRedact) ? globalThis.Boolean(object.debugRedact) : false,
+      featureSupport: isSet(object.featureSupport)
+        ? FieldOptions_FeatureSupport.fromJSON(object.featureSupport)
+        : undefined,
       uninterpretedOption: globalThis.Array.isArray(object?.uninterpretedOption)
         ? object.uninterpretedOption.map((e: any) => UninterpretedOption.fromJSON(e))
         : [],
@@ -5637,6 +5661,9 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
     if (message.debugRedact !== undefined && message.debugRedact !== false) {
       obj.debugRedact = message.debugRedact;
     }
+    if (message.featureSupport !== undefined) {
+      obj.featureSupport = FieldOptions_FeatureSupport.toJSON(message.featureSupport);
+    }
     if (message.uninterpretedOption?.length) {
       obj.uninterpretedOption = message.uninterpretedOption.map((e) => UninterpretedOption.toJSON(e));
     }
@@ -5653,6 +5680,9 @@ export const EnumValueOptions: MessageFns<EnumValueOptions> = {
       ? FeatureSet.fromPartial(object.features)
       : undefined;
     message.debugRedact = object.debugRedact ?? false;
+    message.featureSupport = (object.featureSupport !== undefined && object.featureSupport !== null)
+      ? FieldOptions_FeatureSupport.fromPartial(object.featureSupport)
+      : undefined;
     message.uninterpretedOption = object.uninterpretedOption?.map((e) => UninterpretedOption.fromPartial(e)) || [];
     return message;
   },

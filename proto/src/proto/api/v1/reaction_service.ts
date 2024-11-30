@@ -17,11 +17,144 @@ export interface Reaction {
    */
   creator: string;
   contentId: string;
-  reactionType: string;
+  reactionType: Reaction_Type;
+}
+
+export enum Reaction_Type {
+  TYPE_UNSPECIFIED = "TYPE_UNSPECIFIED",
+  THUMBS_UP = "THUMBS_UP",
+  THUMBS_DOWN = "THUMBS_DOWN",
+  HEART = "HEART",
+  FIRE = "FIRE",
+  CLAPPING_HANDS = "CLAPPING_HANDS",
+  LAUGH = "LAUGH",
+  OK_HAND = "OK_HAND",
+  ROCKET = "ROCKET",
+  EYES = "EYES",
+  THINKING_FACE = "THINKING_FACE",
+  CLOWN_FACE = "CLOWN_FACE",
+  QUESTION_MARK = "QUESTION_MARK",
+  UNRECOGNIZED = "UNRECOGNIZED",
+}
+
+export function reaction_TypeFromJSON(object: any): Reaction_Type {
+  switch (object) {
+    case 0:
+    case "TYPE_UNSPECIFIED":
+      return Reaction_Type.TYPE_UNSPECIFIED;
+    case 1:
+    case "THUMBS_UP":
+      return Reaction_Type.THUMBS_UP;
+    case 2:
+    case "THUMBS_DOWN":
+      return Reaction_Type.THUMBS_DOWN;
+    case 3:
+    case "HEART":
+      return Reaction_Type.HEART;
+    case 4:
+    case "FIRE":
+      return Reaction_Type.FIRE;
+    case 5:
+    case "CLAPPING_HANDS":
+      return Reaction_Type.CLAPPING_HANDS;
+    case 6:
+    case "LAUGH":
+      return Reaction_Type.LAUGH;
+    case 7:
+    case "OK_HAND":
+      return Reaction_Type.OK_HAND;
+    case 8:
+    case "ROCKET":
+      return Reaction_Type.ROCKET;
+    case 9:
+    case "EYES":
+      return Reaction_Type.EYES;
+    case 10:
+    case "THINKING_FACE":
+      return Reaction_Type.THINKING_FACE;
+    case 11:
+    case "CLOWN_FACE":
+      return Reaction_Type.CLOWN_FACE;
+    case 12:
+    case "QUESTION_MARK":
+      return Reaction_Type.QUESTION_MARK;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Reaction_Type.UNRECOGNIZED;
+  }
+}
+
+export function reaction_TypeToJSON(object: Reaction_Type): string {
+  switch (object) {
+    case Reaction_Type.TYPE_UNSPECIFIED:
+      return "TYPE_UNSPECIFIED";
+    case Reaction_Type.THUMBS_UP:
+      return "THUMBS_UP";
+    case Reaction_Type.THUMBS_DOWN:
+      return "THUMBS_DOWN";
+    case Reaction_Type.HEART:
+      return "HEART";
+    case Reaction_Type.FIRE:
+      return "FIRE";
+    case Reaction_Type.CLAPPING_HANDS:
+      return "CLAPPING_HANDS";
+    case Reaction_Type.LAUGH:
+      return "LAUGH";
+    case Reaction_Type.OK_HAND:
+      return "OK_HAND";
+    case Reaction_Type.ROCKET:
+      return "ROCKET";
+    case Reaction_Type.EYES:
+      return "EYES";
+    case Reaction_Type.THINKING_FACE:
+      return "THINKING_FACE";
+    case Reaction_Type.CLOWN_FACE:
+      return "CLOWN_FACE";
+    case Reaction_Type.QUESTION_MARK:
+      return "QUESTION_MARK";
+    case Reaction_Type.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export function reaction_TypeToNumber(object: Reaction_Type): number {
+  switch (object) {
+    case Reaction_Type.TYPE_UNSPECIFIED:
+      return 0;
+    case Reaction_Type.THUMBS_UP:
+      return 1;
+    case Reaction_Type.THUMBS_DOWN:
+      return 2;
+    case Reaction_Type.HEART:
+      return 3;
+    case Reaction_Type.FIRE:
+      return 4;
+    case Reaction_Type.CLAPPING_HANDS:
+      return 5;
+    case Reaction_Type.LAUGH:
+      return 6;
+    case Reaction_Type.OK_HAND:
+      return 7;
+    case Reaction_Type.ROCKET:
+      return 8;
+    case Reaction_Type.EYES:
+      return 9;
+    case Reaction_Type.THINKING_FACE:
+      return 10;
+    case Reaction_Type.CLOWN_FACE:
+      return 11;
+    case Reaction_Type.QUESTION_MARK:
+      return 12;
+    case Reaction_Type.UNRECOGNIZED:
+    default:
+      return -1;
+  }
 }
 
 function createBaseReaction(): Reaction {
-  return { id: 0, creator: "", contentId: "", reactionType: "" };
+  return { id: 0, creator: "", contentId: "", reactionType: Reaction_Type.TYPE_UNSPECIFIED };
 }
 
 export const Reaction: MessageFns<Reaction> = {
@@ -35,8 +168,8 @@ export const Reaction: MessageFns<Reaction> = {
     if (message.contentId !== "") {
       writer.uint32(26).string(message.contentId);
     }
-    if (message.reactionType !== "") {
-      writer.uint32(34).string(message.reactionType);
+    if (message.reactionType !== Reaction_Type.TYPE_UNSPECIFIED) {
+      writer.uint32(32).int32(reaction_TypeToNumber(message.reactionType));
     }
     return writer;
   },
@@ -73,11 +206,11 @@ export const Reaction: MessageFns<Reaction> = {
           continue;
         }
         case 4: {
-          if (tag !== 34) {
+          if (tag !== 32) {
             break;
           }
 
-          message.reactionType = reader.string();
+          message.reactionType = reaction_TypeFromJSON(reader.int32());
           continue;
         }
       }
@@ -94,7 +227,9 @@ export const Reaction: MessageFns<Reaction> = {
       id: isSet(object.id) ? globalThis.Number(object.id) : 0,
       creator: isSet(object.creator) ? globalThis.String(object.creator) : "",
       contentId: isSet(object.contentId) ? globalThis.String(object.contentId) : "",
-      reactionType: isSet(object.reactionType) ? globalThis.String(object.reactionType) : "",
+      reactionType: isSet(object.reactionType)
+        ? reaction_TypeFromJSON(object.reactionType)
+        : Reaction_Type.TYPE_UNSPECIFIED,
     };
   },
 
@@ -109,8 +244,8 @@ export const Reaction: MessageFns<Reaction> = {
     if (message.contentId !== "") {
       obj.contentId = message.contentId;
     }
-    if (message.reactionType !== "") {
-      obj.reactionType = message.reactionType;
+    if (message.reactionType !== Reaction_Type.TYPE_UNSPECIFIED) {
+      obj.reactionType = reaction_TypeToJSON(message.reactionType);
     }
     return obj;
   },
@@ -123,7 +258,7 @@ export const Reaction: MessageFns<Reaction> = {
     message.id = object.id ?? 0;
     message.creator = object.creator ?? "";
     message.contentId = object.contentId ?? "";
-    message.reactionType = object.reactionType ?? "";
+    message.reactionType = object.reactionType ?? Reaction_Type.TYPE_UNSPECIFIED;
     return message;
   },
 };

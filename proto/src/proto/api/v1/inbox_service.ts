@@ -137,19 +137,10 @@ export function inbox_TypeToNumber(object: Inbox_Type): number {
 export interface ListInboxesRequest {
   /** Format: users/{id} */
   user: string;
-  /** The maximum number of inbox to return. */
-  pageSize: number;
-  /** Provide this to retrieve the subsequent page. */
-  pageToken: string;
 }
 
 export interface ListInboxesResponse {
   inboxes: Inbox[];
-  /**
-   * A token, which can be sent as `page_token` to retrieve the next page.
-   * If this field is omitted, there are no subsequent pages.
-   */
-  nextPageToken: string;
 }
 
 export interface UpdateInboxRequest {
@@ -330,19 +321,13 @@ export const Inbox: MessageFns<Inbox> = {
 };
 
 function createBaseListInboxesRequest(): ListInboxesRequest {
-  return { user: "", pageSize: 0, pageToken: "" };
+  return { user: "" };
 }
 
 export const ListInboxesRequest: MessageFns<ListInboxesRequest> = {
   encode(message: ListInboxesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.user !== "") {
       writer.uint32(10).string(message.user);
-    }
-    if (message.pageSize !== 0) {
-      writer.uint32(16).int32(message.pageSize);
-    }
-    if (message.pageToken !== "") {
-      writer.uint32(26).string(message.pageToken);
     }
     return writer;
   },
@@ -362,22 +347,6 @@ export const ListInboxesRequest: MessageFns<ListInboxesRequest> = {
           message.user = reader.string();
           continue;
         }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.pageSize = reader.int32();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.pageToken = reader.string();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -388,23 +357,13 @@ export const ListInboxesRequest: MessageFns<ListInboxesRequest> = {
   },
 
   fromJSON(object: any): ListInboxesRequest {
-    return {
-      user: isSet(object.user) ? globalThis.String(object.user) : "",
-      pageSize: isSet(object.pageSize) ? globalThis.Number(object.pageSize) : 0,
-      pageToken: isSet(object.pageToken) ? globalThis.String(object.pageToken) : "",
-    };
+    return { user: isSet(object.user) ? globalThis.String(object.user) : "" };
   },
 
   toJSON(message: ListInboxesRequest): unknown {
     const obj: any = {};
     if (message.user !== "") {
       obj.user = message.user;
-    }
-    if (message.pageSize !== 0) {
-      obj.pageSize = Math.round(message.pageSize);
-    }
-    if (message.pageToken !== "") {
-      obj.pageToken = message.pageToken;
     }
     return obj;
   },
@@ -415,23 +374,18 @@ export const ListInboxesRequest: MessageFns<ListInboxesRequest> = {
   fromPartial(object: DeepPartial<ListInboxesRequest>): ListInboxesRequest {
     const message = createBaseListInboxesRequest();
     message.user = object.user ?? "";
-    message.pageSize = object.pageSize ?? 0;
-    message.pageToken = object.pageToken ?? "";
     return message;
   },
 };
 
 function createBaseListInboxesResponse(): ListInboxesResponse {
-  return { inboxes: [], nextPageToken: "" };
+  return { inboxes: [] };
 }
 
 export const ListInboxesResponse: MessageFns<ListInboxesResponse> = {
   encode(message: ListInboxesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.inboxes) {
       Inbox.encode(v!, writer.uint32(10).fork()).join();
-    }
-    if (message.nextPageToken !== "") {
-      writer.uint32(18).string(message.nextPageToken);
     }
     return writer;
   },
@@ -451,14 +405,6 @@ export const ListInboxesResponse: MessageFns<ListInboxesResponse> = {
           message.inboxes.push(Inbox.decode(reader, reader.uint32()));
           continue;
         }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.nextPageToken = reader.string();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -471,7 +417,6 @@ export const ListInboxesResponse: MessageFns<ListInboxesResponse> = {
   fromJSON(object: any): ListInboxesResponse {
     return {
       inboxes: globalThis.Array.isArray(object?.inboxes) ? object.inboxes.map((e: any) => Inbox.fromJSON(e)) : [],
-      nextPageToken: isSet(object.nextPageToken) ? globalThis.String(object.nextPageToken) : "",
     };
   },
 
@@ -479,9 +424,6 @@ export const ListInboxesResponse: MessageFns<ListInboxesResponse> = {
     const obj: any = {};
     if (message.inboxes?.length) {
       obj.inboxes = message.inboxes.map((e) => Inbox.toJSON(e));
-    }
-    if (message.nextPageToken !== "") {
-      obj.nextPageToken = message.nextPageToken;
     }
     return obj;
   },
@@ -492,7 +434,6 @@ export const ListInboxesResponse: MessageFns<ListInboxesResponse> = {
   fromPartial(object: DeepPartial<ListInboxesResponse>): ListInboxesResponse {
     const message = createBaseListInboxesResponse();
     message.inboxes = object.inboxes?.map((e) => Inbox.fromPartial(e)) || [];
-    message.nextPageToken = object.nextPageToken ?? "";
     return message;
   },
 };

@@ -11,21 +11,18 @@ export const protobufPackage = "memos.api.v1";
 
 export enum NodeType {
   NODE_UNSPECIFIED = "NODE_UNSPECIFIED",
-  /** LINE_BREAK - Block nodes. */
   LINE_BREAK = "LINE_BREAK",
   PARAGRAPH = "PARAGRAPH",
   CODE_BLOCK = "CODE_BLOCK",
   HEADING = "HEADING",
   HORIZONTAL_RULE = "HORIZONTAL_RULE",
   BLOCKQUOTE = "BLOCKQUOTE",
-  LIST = "LIST",
-  ORDERED_LIST_ITEM = "ORDERED_LIST_ITEM",
-  UNORDERED_LIST_ITEM = "UNORDERED_LIST_ITEM",
-  TASK_LIST_ITEM = "TASK_LIST_ITEM",
+  ORDERED_LIST = "ORDERED_LIST",
+  UNORDERED_LIST = "UNORDERED_LIST",
+  TASK_LIST = "TASK_LIST",
   MATH_BLOCK = "MATH_BLOCK",
   TABLE = "TABLE",
   EMBEDDED_CONTENT = "EMBEDDED_CONTENT",
-  /** TEXT - Inline nodes. */
   TEXT = "TEXT",
   BOLD = "BOLD",
   ITALIC = "ITALIC",
@@ -43,7 +40,6 @@ export enum NodeType {
   SUPERSCRIPT = "SUPERSCRIPT",
   REFERENCED_CONTENT = "REFERENCED_CONTENT",
   SPOILER = "SPOILER",
-  HTML_ELEMENT = "HTML_ELEMENT",
   UNRECOGNIZED = "UNRECOGNIZED",
 }
 
@@ -71,80 +67,74 @@ export function nodeTypeFromJSON(object: any): NodeType {
     case "BLOCKQUOTE":
       return NodeType.BLOCKQUOTE;
     case 7:
-    case "LIST":
-      return NodeType.LIST;
+    case "ORDERED_LIST":
+      return NodeType.ORDERED_LIST;
     case 8:
-    case "ORDERED_LIST_ITEM":
-      return NodeType.ORDERED_LIST_ITEM;
+    case "UNORDERED_LIST":
+      return NodeType.UNORDERED_LIST;
     case 9:
-    case "UNORDERED_LIST_ITEM":
-      return NodeType.UNORDERED_LIST_ITEM;
+    case "TASK_LIST":
+      return NodeType.TASK_LIST;
     case 10:
-    case "TASK_LIST_ITEM":
-      return NodeType.TASK_LIST_ITEM;
-    case 11:
     case "MATH_BLOCK":
       return NodeType.MATH_BLOCK;
-    case 12:
+    case 11:
     case "TABLE":
       return NodeType.TABLE;
-    case 13:
+    case 12:
     case "EMBEDDED_CONTENT":
       return NodeType.EMBEDDED_CONTENT;
-    case 51:
+    case 13:
     case "TEXT":
       return NodeType.TEXT;
-    case 52:
+    case 14:
     case "BOLD":
       return NodeType.BOLD;
-    case 53:
+    case 15:
     case "ITALIC":
       return NodeType.ITALIC;
-    case 54:
+    case 16:
     case "BOLD_ITALIC":
       return NodeType.BOLD_ITALIC;
-    case 55:
+    case 17:
     case "CODE":
       return NodeType.CODE;
-    case 56:
+    case 18:
     case "IMAGE":
       return NodeType.IMAGE;
-    case 57:
+    case 19:
     case "LINK":
       return NodeType.LINK;
-    case 58:
+    case 20:
     case "AUTO_LINK":
       return NodeType.AUTO_LINK;
-    case 59:
+    case 21:
     case "TAG":
       return NodeType.TAG;
-    case 60:
+    case 22:
     case "STRIKETHROUGH":
       return NodeType.STRIKETHROUGH;
-    case 61:
+    case 23:
     case "ESCAPING_CHARACTER":
       return NodeType.ESCAPING_CHARACTER;
-    case 62:
+    case 24:
     case "MATH":
       return NodeType.MATH;
-    case 63:
+    case 25:
     case "HIGHLIGHT":
       return NodeType.HIGHLIGHT;
-    case 64:
+    case 26:
     case "SUBSCRIPT":
       return NodeType.SUBSCRIPT;
-    case 65:
+    case 27:
     case "SUPERSCRIPT":
       return NodeType.SUPERSCRIPT;
-    case 66:
+    case 28:
     case "REFERENCED_CONTENT":
       return NodeType.REFERENCED_CONTENT;
-    case 67:
+    case 29:
     case "SPOILER":
       return NodeType.SPOILER;
-    case 68:
-    case "HTML_ELEMENT":
-      return NodeType.HTML_ELEMENT;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -168,14 +158,12 @@ export function nodeTypeToJSON(object: NodeType): string {
       return "HORIZONTAL_RULE";
     case NodeType.BLOCKQUOTE:
       return "BLOCKQUOTE";
-    case NodeType.LIST:
-      return "LIST";
-    case NodeType.ORDERED_LIST_ITEM:
-      return "ORDERED_LIST_ITEM";
-    case NodeType.UNORDERED_LIST_ITEM:
-      return "UNORDERED_LIST_ITEM";
-    case NodeType.TASK_LIST_ITEM:
-      return "TASK_LIST_ITEM";
+    case NodeType.ORDERED_LIST:
+      return "ORDERED_LIST";
+    case NodeType.UNORDERED_LIST:
+      return "UNORDERED_LIST";
+    case NodeType.TASK_LIST:
+      return "TASK_LIST";
     case NodeType.MATH_BLOCK:
       return "MATH_BLOCK";
     case NodeType.TABLE:
@@ -216,8 +204,6 @@ export function nodeTypeToJSON(object: NodeType): string {
       return "REFERENCED_CONTENT";
     case NodeType.SPOILER:
       return "SPOILER";
-    case NodeType.HTML_ELEMENT:
-      return "HTML_ELEMENT";
     case NodeType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -240,56 +226,52 @@ export function nodeTypeToNumber(object: NodeType): number {
       return 5;
     case NodeType.BLOCKQUOTE:
       return 6;
-    case NodeType.LIST:
+    case NodeType.ORDERED_LIST:
       return 7;
-    case NodeType.ORDERED_LIST_ITEM:
+    case NodeType.UNORDERED_LIST:
       return 8;
-    case NodeType.UNORDERED_LIST_ITEM:
+    case NodeType.TASK_LIST:
       return 9;
-    case NodeType.TASK_LIST_ITEM:
-      return 10;
     case NodeType.MATH_BLOCK:
-      return 11;
+      return 10;
     case NodeType.TABLE:
-      return 12;
+      return 11;
     case NodeType.EMBEDDED_CONTENT:
-      return 13;
+      return 12;
     case NodeType.TEXT:
-      return 51;
+      return 13;
     case NodeType.BOLD:
-      return 52;
+      return 14;
     case NodeType.ITALIC:
-      return 53;
+      return 15;
     case NodeType.BOLD_ITALIC:
-      return 54;
+      return 16;
     case NodeType.CODE:
-      return 55;
+      return 17;
     case NodeType.IMAGE:
-      return 56;
+      return 18;
     case NodeType.LINK:
-      return 57;
+      return 19;
     case NodeType.AUTO_LINK:
-      return 58;
+      return 20;
     case NodeType.TAG:
-      return 59;
+      return 21;
     case NodeType.STRIKETHROUGH:
-      return 60;
+      return 22;
     case NodeType.ESCAPING_CHARACTER:
-      return 61;
+      return 23;
     case NodeType.MATH:
-      return 62;
+      return 24;
     case NodeType.HIGHLIGHT:
-      return 63;
+      return 25;
     case NodeType.SUBSCRIPT:
-      return 64;
+      return 26;
     case NodeType.SUPERSCRIPT:
-      return 65;
+      return 27;
     case NodeType.REFERENCED_CONTENT:
-      return 66;
+      return 28;
     case NodeType.SPOILER:
-      return 67;
-    case NodeType.HTML_ELEMENT:
-      return 68;
+      return 29;
     case NodeType.UNRECOGNIZED:
     default:
       return -1;
@@ -304,20 +286,12 @@ export interface ParseMarkdownResponse {
   nodes: Node[];
 }
 
-export interface RestoreMarkdownNodesRequest {
+export interface RestoreMarkdownRequest {
   nodes: Node[];
 }
 
-export interface RestoreMarkdownNodesResponse {
+export interface RestoreMarkdownResponse {
   markdown: string;
-}
-
-export interface StringifyMarkdownNodesRequest {
-  nodes: Node[];
-}
-
-export interface StringifyMarkdownNodesResponse {
-  plainText: string;
 }
 
 export interface GetLinkMetadataRequest {
@@ -334,7 +308,6 @@ export interface Node {
   type: NodeType;
   node?:
     | //
-    /** Block nodes. */
     { $case: "lineBreakNode"; lineBreakNode: LineBreakNode }
     | //
     { $case: "paragraphNode"; paragraphNode: ParagraphNode }
@@ -347,13 +320,11 @@ export interface Node {
     | //
     { $case: "blockquoteNode"; blockquoteNode: BlockquoteNode }
     | //
-    { $case: "listNode"; listNode: ListNode }
+    { $case: "orderedListNode"; orderedListNode: OrderedListNode }
     | //
-    { $case: "orderedListItemNode"; orderedListItemNode: OrderedListItemNode }
+    { $case: "unorderedListNode"; unorderedListNode: UnorderedListNode }
     | //
-    { $case: "unorderedListItemNode"; unorderedListItemNode: UnorderedListItemNode }
-    | //
-    { $case: "taskListItemNode"; taskListItemNode: TaskListItemNode }
+    { $case: "taskListNode"; taskListNode: TaskListNode }
     | //
     { $case: "mathBlockNode"; mathBlockNode: MathBlockNode }
     | //
@@ -361,7 +332,6 @@ export interface Node {
     | //
     { $case: "embeddedContentNode"; embeddedContentNode: EmbeddedContentNode }
     | //
-    /** Inline nodes. */
     { $case: "textNode"; textNode: TextNode }
     | //
     { $case: "boldNode"; boldNode: BoldNode }
@@ -395,8 +365,6 @@ export interface Node {
     { $case: "referencedContentNode"; referencedContentNode: ReferencedContentNode }
     | //
     { $case: "spoilerNode"; spoilerNode: SpoilerNode }
-    | //
-    { $case: "htmlElementNode"; htmlElementNode: HTMLElementNode }
     | undefined;
 }
 
@@ -425,86 +393,19 @@ export interface BlockquoteNode {
   children: Node[];
 }
 
-export interface ListNode {
-  kind: ListNode_Kind;
-  indent: number;
-  children: Node[];
-}
-
-export enum ListNode_Kind {
-  KIND_UNSPECIFIED = "KIND_UNSPECIFIED",
-  ORDERED = "ORDERED",
-  UNORDERED = "UNORDERED",
-  DESCRIPTION = "DESCRIPTION",
-  UNRECOGNIZED = "UNRECOGNIZED",
-}
-
-export function listNode_KindFromJSON(object: any): ListNode_Kind {
-  switch (object) {
-    case 0:
-    case "KIND_UNSPECIFIED":
-      return ListNode_Kind.KIND_UNSPECIFIED;
-    case 1:
-    case "ORDERED":
-      return ListNode_Kind.ORDERED;
-    case 2:
-    case "UNORDERED":
-      return ListNode_Kind.UNORDERED;
-    case 3:
-    case "DESCRIPTION":
-      return ListNode_Kind.DESCRIPTION;
-    case -1:
-    case "UNRECOGNIZED":
-    default:
-      return ListNode_Kind.UNRECOGNIZED;
-  }
-}
-
-export function listNode_KindToJSON(object: ListNode_Kind): string {
-  switch (object) {
-    case ListNode_Kind.KIND_UNSPECIFIED:
-      return "KIND_UNSPECIFIED";
-    case ListNode_Kind.ORDERED:
-      return "ORDERED";
-    case ListNode_Kind.UNORDERED:
-      return "UNORDERED";
-    case ListNode_Kind.DESCRIPTION:
-      return "DESCRIPTION";
-    case ListNode_Kind.UNRECOGNIZED:
-    default:
-      return "UNRECOGNIZED";
-  }
-}
-
-export function listNode_KindToNumber(object: ListNode_Kind): number {
-  switch (object) {
-    case ListNode_Kind.KIND_UNSPECIFIED:
-      return 0;
-    case ListNode_Kind.ORDERED:
-      return 1;
-    case ListNode_Kind.UNORDERED:
-      return 2;
-    case ListNode_Kind.DESCRIPTION:
-      return 3;
-    case ListNode_Kind.UNRECOGNIZED:
-    default:
-      return -1;
-  }
-}
-
-export interface OrderedListItemNode {
+export interface OrderedListNode {
   number: string;
   indent: number;
   children: Node[];
 }
 
-export interface UnorderedListItemNode {
+export interface UnorderedListNode {
   symbol: string;
   indent: number;
   children: Node[];
 }
 
-export interface TaskListItemNode {
+export interface TaskListNode {
   symbol: string;
   indent: number;
   complete: boolean;
@@ -516,13 +417,13 @@ export interface MathBlockNode {
 }
 
 export interface TableNode {
-  header: Node[];
+  header: string[];
   delimiter: string[];
   rows: TableNode_Row[];
 }
 
 export interface TableNode_Row {
-  cells: Node[];
+  cells: string[];
 }
 
 export interface EmbeddedContentNode {
@@ -603,16 +504,6 @@ export interface ReferencedContentNode {
 
 export interface SpoilerNode {
   content: string;
-}
-
-export interface HTMLElementNode {
-  tagName: string;
-  attributes: { [key: string]: string };
-}
-
-export interface HTMLElementNode_AttributesEntry {
-  key: string;
-  value: string;
 }
 
 function createBaseParseMarkdownRequest(): ParseMarkdownRequest {
@@ -731,22 +622,22 @@ export const ParseMarkdownResponse: MessageFns<ParseMarkdownResponse> = {
   },
 };
 
-function createBaseRestoreMarkdownNodesRequest(): RestoreMarkdownNodesRequest {
+function createBaseRestoreMarkdownRequest(): RestoreMarkdownRequest {
   return { nodes: [] };
 }
 
-export const RestoreMarkdownNodesRequest: MessageFns<RestoreMarkdownNodesRequest> = {
-  encode(message: RestoreMarkdownNodesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const RestoreMarkdownRequest: MessageFns<RestoreMarkdownRequest> = {
+  encode(message: RestoreMarkdownRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.nodes) {
       Node.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RestoreMarkdownNodesRequest {
+  decode(input: BinaryReader | Uint8Array, length?: number): RestoreMarkdownRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRestoreMarkdownNodesRequest();
+    const message = createBaseRestoreMarkdownRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -767,11 +658,11 @@ export const RestoreMarkdownNodesRequest: MessageFns<RestoreMarkdownNodesRequest
     return message;
   },
 
-  fromJSON(object: any): RestoreMarkdownNodesRequest {
+  fromJSON(object: any): RestoreMarkdownRequest {
     return { nodes: globalThis.Array.isArray(object?.nodes) ? object.nodes.map((e: any) => Node.fromJSON(e)) : [] };
   },
 
-  toJSON(message: RestoreMarkdownNodesRequest): unknown {
+  toJSON(message: RestoreMarkdownRequest): unknown {
     const obj: any = {};
     if (message.nodes?.length) {
       obj.nodes = message.nodes.map((e) => Node.toJSON(e));
@@ -779,32 +670,32 @@ export const RestoreMarkdownNodesRequest: MessageFns<RestoreMarkdownNodesRequest
     return obj;
   },
 
-  create(base?: DeepPartial<RestoreMarkdownNodesRequest>): RestoreMarkdownNodesRequest {
-    return RestoreMarkdownNodesRequest.fromPartial(base ?? {});
+  create(base?: DeepPartial<RestoreMarkdownRequest>): RestoreMarkdownRequest {
+    return RestoreMarkdownRequest.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<RestoreMarkdownNodesRequest>): RestoreMarkdownNodesRequest {
-    const message = createBaseRestoreMarkdownNodesRequest();
+  fromPartial(object: DeepPartial<RestoreMarkdownRequest>): RestoreMarkdownRequest {
+    const message = createBaseRestoreMarkdownRequest();
     message.nodes = object.nodes?.map((e) => Node.fromPartial(e)) || [];
     return message;
   },
 };
 
-function createBaseRestoreMarkdownNodesResponse(): RestoreMarkdownNodesResponse {
+function createBaseRestoreMarkdownResponse(): RestoreMarkdownResponse {
   return { markdown: "" };
 }
 
-export const RestoreMarkdownNodesResponse: MessageFns<RestoreMarkdownNodesResponse> = {
-  encode(message: RestoreMarkdownNodesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const RestoreMarkdownResponse: MessageFns<RestoreMarkdownResponse> = {
+  encode(message: RestoreMarkdownResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.markdown !== "") {
       writer.uint32(10).string(message.markdown);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RestoreMarkdownNodesResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): RestoreMarkdownResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRestoreMarkdownNodesResponse();
+    const message = createBaseRestoreMarkdownResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -825,11 +716,11 @@ export const RestoreMarkdownNodesResponse: MessageFns<RestoreMarkdownNodesRespon
     return message;
   },
 
-  fromJSON(object: any): RestoreMarkdownNodesResponse {
+  fromJSON(object: any): RestoreMarkdownResponse {
     return { markdown: isSet(object.markdown) ? globalThis.String(object.markdown) : "" };
   },
 
-  toJSON(message: RestoreMarkdownNodesResponse): unknown {
+  toJSON(message: RestoreMarkdownResponse): unknown {
     const obj: any = {};
     if (message.markdown !== "") {
       obj.markdown = message.markdown;
@@ -837,128 +728,12 @@ export const RestoreMarkdownNodesResponse: MessageFns<RestoreMarkdownNodesRespon
     return obj;
   },
 
-  create(base?: DeepPartial<RestoreMarkdownNodesResponse>): RestoreMarkdownNodesResponse {
-    return RestoreMarkdownNodesResponse.fromPartial(base ?? {});
+  create(base?: DeepPartial<RestoreMarkdownResponse>): RestoreMarkdownResponse {
+    return RestoreMarkdownResponse.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<RestoreMarkdownNodesResponse>): RestoreMarkdownNodesResponse {
-    const message = createBaseRestoreMarkdownNodesResponse();
+  fromPartial(object: DeepPartial<RestoreMarkdownResponse>): RestoreMarkdownResponse {
+    const message = createBaseRestoreMarkdownResponse();
     message.markdown = object.markdown ?? "";
-    return message;
-  },
-};
-
-function createBaseStringifyMarkdownNodesRequest(): StringifyMarkdownNodesRequest {
-  return { nodes: [] };
-}
-
-export const StringifyMarkdownNodesRequest: MessageFns<StringifyMarkdownNodesRequest> = {
-  encode(message: StringifyMarkdownNodesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.nodes) {
-      Node.encode(v!, writer.uint32(10).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): StringifyMarkdownNodesRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStringifyMarkdownNodesRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.nodes.push(Node.decode(reader, reader.uint32()));
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): StringifyMarkdownNodesRequest {
-    return { nodes: globalThis.Array.isArray(object?.nodes) ? object.nodes.map((e: any) => Node.fromJSON(e)) : [] };
-  },
-
-  toJSON(message: StringifyMarkdownNodesRequest): unknown {
-    const obj: any = {};
-    if (message.nodes?.length) {
-      obj.nodes = message.nodes.map((e) => Node.toJSON(e));
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<StringifyMarkdownNodesRequest>): StringifyMarkdownNodesRequest {
-    return StringifyMarkdownNodesRequest.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<StringifyMarkdownNodesRequest>): StringifyMarkdownNodesRequest {
-    const message = createBaseStringifyMarkdownNodesRequest();
-    message.nodes = object.nodes?.map((e) => Node.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseStringifyMarkdownNodesResponse(): StringifyMarkdownNodesResponse {
-  return { plainText: "" };
-}
-
-export const StringifyMarkdownNodesResponse: MessageFns<StringifyMarkdownNodesResponse> = {
-  encode(message: StringifyMarkdownNodesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.plainText !== "") {
-      writer.uint32(10).string(message.plainText);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): StringifyMarkdownNodesResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStringifyMarkdownNodesResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.plainText = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): StringifyMarkdownNodesResponse {
-    return { plainText: isSet(object.plainText) ? globalThis.String(object.plainText) : "" };
-  },
-
-  toJSON(message: StringifyMarkdownNodesResponse): unknown {
-    const obj: any = {};
-    if (message.plainText !== "") {
-      obj.plainText = message.plainText;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<StringifyMarkdownNodesResponse>): StringifyMarkdownNodesResponse {
-    return StringifyMarkdownNodesResponse.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<StringifyMarkdownNodesResponse>): StringifyMarkdownNodesResponse {
-    const message = createBaseStringifyMarkdownNodesResponse();
-    message.plainText = object.plainText ?? "";
     return message;
   },
 };
@@ -1124,97 +899,91 @@ export const Node: MessageFns<Node> = {
     }
     switch (message.node?.$case) {
       case "lineBreakNode":
-        LineBreakNode.encode(message.node.lineBreakNode, writer.uint32(90).fork()).join();
+        LineBreakNode.encode(message.node.lineBreakNode, writer.uint32(18).fork()).join();
         break;
       case "paragraphNode":
-        ParagraphNode.encode(message.node.paragraphNode, writer.uint32(98).fork()).join();
+        ParagraphNode.encode(message.node.paragraphNode, writer.uint32(26).fork()).join();
         break;
       case "codeBlockNode":
-        CodeBlockNode.encode(message.node.codeBlockNode, writer.uint32(106).fork()).join();
+        CodeBlockNode.encode(message.node.codeBlockNode, writer.uint32(34).fork()).join();
         break;
       case "headingNode":
-        HeadingNode.encode(message.node.headingNode, writer.uint32(114).fork()).join();
+        HeadingNode.encode(message.node.headingNode, writer.uint32(42).fork()).join();
         break;
       case "horizontalRuleNode":
-        HorizontalRuleNode.encode(message.node.horizontalRuleNode, writer.uint32(122).fork()).join();
+        HorizontalRuleNode.encode(message.node.horizontalRuleNode, writer.uint32(50).fork()).join();
         break;
       case "blockquoteNode":
-        BlockquoteNode.encode(message.node.blockquoteNode, writer.uint32(130).fork()).join();
+        BlockquoteNode.encode(message.node.blockquoteNode, writer.uint32(58).fork()).join();
         break;
-      case "listNode":
-        ListNode.encode(message.node.listNode, writer.uint32(138).fork()).join();
+      case "orderedListNode":
+        OrderedListNode.encode(message.node.orderedListNode, writer.uint32(66).fork()).join();
         break;
-      case "orderedListItemNode":
-        OrderedListItemNode.encode(message.node.orderedListItemNode, writer.uint32(146).fork()).join();
+      case "unorderedListNode":
+        UnorderedListNode.encode(message.node.unorderedListNode, writer.uint32(74).fork()).join();
         break;
-      case "unorderedListItemNode":
-        UnorderedListItemNode.encode(message.node.unorderedListItemNode, writer.uint32(154).fork()).join();
-        break;
-      case "taskListItemNode":
-        TaskListItemNode.encode(message.node.taskListItemNode, writer.uint32(162).fork()).join();
+      case "taskListNode":
+        TaskListNode.encode(message.node.taskListNode, writer.uint32(82).fork()).join();
         break;
       case "mathBlockNode":
-        MathBlockNode.encode(message.node.mathBlockNode, writer.uint32(170).fork()).join();
+        MathBlockNode.encode(message.node.mathBlockNode, writer.uint32(90).fork()).join();
         break;
       case "tableNode":
-        TableNode.encode(message.node.tableNode, writer.uint32(178).fork()).join();
+        TableNode.encode(message.node.tableNode, writer.uint32(98).fork()).join();
         break;
       case "embeddedContentNode":
-        EmbeddedContentNode.encode(message.node.embeddedContentNode, writer.uint32(186).fork()).join();
+        EmbeddedContentNode.encode(message.node.embeddedContentNode, writer.uint32(106).fork()).join();
         break;
       case "textNode":
-        TextNode.encode(message.node.textNode, writer.uint32(410).fork()).join();
+        TextNode.encode(message.node.textNode, writer.uint32(114).fork()).join();
         break;
       case "boldNode":
-        BoldNode.encode(message.node.boldNode, writer.uint32(418).fork()).join();
+        BoldNode.encode(message.node.boldNode, writer.uint32(122).fork()).join();
         break;
       case "italicNode":
-        ItalicNode.encode(message.node.italicNode, writer.uint32(426).fork()).join();
+        ItalicNode.encode(message.node.italicNode, writer.uint32(130).fork()).join();
         break;
       case "boldItalicNode":
-        BoldItalicNode.encode(message.node.boldItalicNode, writer.uint32(434).fork()).join();
+        BoldItalicNode.encode(message.node.boldItalicNode, writer.uint32(138).fork()).join();
         break;
       case "codeNode":
-        CodeNode.encode(message.node.codeNode, writer.uint32(442).fork()).join();
+        CodeNode.encode(message.node.codeNode, writer.uint32(146).fork()).join();
         break;
       case "imageNode":
-        ImageNode.encode(message.node.imageNode, writer.uint32(450).fork()).join();
+        ImageNode.encode(message.node.imageNode, writer.uint32(154).fork()).join();
         break;
       case "linkNode":
-        LinkNode.encode(message.node.linkNode, writer.uint32(458).fork()).join();
+        LinkNode.encode(message.node.linkNode, writer.uint32(162).fork()).join();
         break;
       case "autoLinkNode":
-        AutoLinkNode.encode(message.node.autoLinkNode, writer.uint32(466).fork()).join();
+        AutoLinkNode.encode(message.node.autoLinkNode, writer.uint32(170).fork()).join();
         break;
       case "tagNode":
-        TagNode.encode(message.node.tagNode, writer.uint32(474).fork()).join();
+        TagNode.encode(message.node.tagNode, writer.uint32(178).fork()).join();
         break;
       case "strikethroughNode":
-        StrikethroughNode.encode(message.node.strikethroughNode, writer.uint32(482).fork()).join();
+        StrikethroughNode.encode(message.node.strikethroughNode, writer.uint32(186).fork()).join();
         break;
       case "escapingCharacterNode":
-        EscapingCharacterNode.encode(message.node.escapingCharacterNode, writer.uint32(490).fork()).join();
+        EscapingCharacterNode.encode(message.node.escapingCharacterNode, writer.uint32(194).fork()).join();
         break;
       case "mathNode":
-        MathNode.encode(message.node.mathNode, writer.uint32(498).fork()).join();
+        MathNode.encode(message.node.mathNode, writer.uint32(202).fork()).join();
         break;
       case "highlightNode":
-        HighlightNode.encode(message.node.highlightNode, writer.uint32(506).fork()).join();
+        HighlightNode.encode(message.node.highlightNode, writer.uint32(210).fork()).join();
         break;
       case "subscriptNode":
-        SubscriptNode.encode(message.node.subscriptNode, writer.uint32(514).fork()).join();
+        SubscriptNode.encode(message.node.subscriptNode, writer.uint32(218).fork()).join();
         break;
       case "superscriptNode":
-        SuperscriptNode.encode(message.node.superscriptNode, writer.uint32(522).fork()).join();
+        SuperscriptNode.encode(message.node.superscriptNode, writer.uint32(226).fork()).join();
         break;
       case "referencedContentNode":
-        ReferencedContentNode.encode(message.node.referencedContentNode, writer.uint32(530).fork()).join();
+        ReferencedContentNode.encode(message.node.referencedContentNode, writer.uint32(234).fork()).join();
         break;
       case "spoilerNode":
-        SpoilerNode.encode(message.node.spoilerNode, writer.uint32(538).fork()).join();
-        break;
-      case "htmlElementNode":
-        HTMLElementNode.encode(message.node.htmlElementNode, writer.uint32(546).fork()).join();
+        SpoilerNode.encode(message.node.spoilerNode, writer.uint32(242).fork()).join();
         break;
     }
     return writer;
@@ -1235,40 +1004,40 @@ export const Node: MessageFns<Node> = {
           message.type = nodeTypeFromJSON(reader.int32());
           continue;
         }
-        case 11: {
-          if (tag !== 90) {
+        case 2: {
+          if (tag !== 18) {
             break;
           }
 
           message.node = { $case: "lineBreakNode", lineBreakNode: LineBreakNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 12: {
-          if (tag !== 98) {
+        case 3: {
+          if (tag !== 26) {
             break;
           }
 
           message.node = { $case: "paragraphNode", paragraphNode: ParagraphNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 13: {
-          if (tag !== 106) {
+        case 4: {
+          if (tag !== 34) {
             break;
           }
 
           message.node = { $case: "codeBlockNode", codeBlockNode: CodeBlockNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 14: {
-          if (tag !== 114) {
+        case 5: {
+          if (tag !== 42) {
             break;
           }
 
           message.node = { $case: "headingNode", headingNode: HeadingNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 15: {
-          if (tag !== 122) {
+        case 6: {
+          if (tag !== 50) {
             break;
           }
 
@@ -1278,73 +1047,59 @@ export const Node: MessageFns<Node> = {
           };
           continue;
         }
-        case 16: {
-          if (tag !== 130) {
+        case 7: {
+          if (tag !== 58) {
             break;
           }
 
           message.node = { $case: "blockquoteNode", blockquoteNode: BlockquoteNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 17: {
-          if (tag !== 138) {
+        case 8: {
+          if (tag !== 66) {
             break;
           }
 
-          message.node = { $case: "listNode", listNode: ListNode.decode(reader, reader.uint32()) };
+          message.node = { $case: "orderedListNode", orderedListNode: OrderedListNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 18: {
-          if (tag !== 146) {
-            break;
-          }
-
-          message.node = {
-            $case: "orderedListItemNode",
-            orderedListItemNode: OrderedListItemNode.decode(reader, reader.uint32()),
-          };
-          continue;
-        }
-        case 19: {
-          if (tag !== 154) {
+        case 9: {
+          if (tag !== 74) {
             break;
           }
 
           message.node = {
-            $case: "unorderedListItemNode",
-            unorderedListItemNode: UnorderedListItemNode.decode(reader, reader.uint32()),
+            $case: "unorderedListNode",
+            unorderedListNode: UnorderedListNode.decode(reader, reader.uint32()),
           };
           continue;
         }
-        case 20: {
-          if (tag !== 162) {
+        case 10: {
+          if (tag !== 82) {
             break;
           }
 
-          message.node = {
-            $case: "taskListItemNode",
-            taskListItemNode: TaskListItemNode.decode(reader, reader.uint32()),
-          };
+          message.node = { $case: "taskListNode", taskListNode: TaskListNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 21: {
-          if (tag !== 170) {
+        case 11: {
+          if (tag !== 90) {
             break;
           }
 
           message.node = { $case: "mathBlockNode", mathBlockNode: MathBlockNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 22: {
-          if (tag !== 178) {
+        case 12: {
+          if (tag !== 98) {
             break;
           }
 
           message.node = { $case: "tableNode", tableNode: TableNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 23: {
-          if (tag !== 186) {
+        case 13: {
+          if (tag !== 106) {
             break;
           }
 
@@ -1354,80 +1109,80 @@ export const Node: MessageFns<Node> = {
           };
           continue;
         }
-        case 51: {
-          if (tag !== 410) {
+        case 14: {
+          if (tag !== 114) {
             break;
           }
 
           message.node = { $case: "textNode", textNode: TextNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 52: {
-          if (tag !== 418) {
+        case 15: {
+          if (tag !== 122) {
             break;
           }
 
           message.node = { $case: "boldNode", boldNode: BoldNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 53: {
-          if (tag !== 426) {
+        case 16: {
+          if (tag !== 130) {
             break;
           }
 
           message.node = { $case: "italicNode", italicNode: ItalicNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 54: {
-          if (tag !== 434) {
+        case 17: {
+          if (tag !== 138) {
             break;
           }
 
           message.node = { $case: "boldItalicNode", boldItalicNode: BoldItalicNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 55: {
-          if (tag !== 442) {
+        case 18: {
+          if (tag !== 146) {
             break;
           }
 
           message.node = { $case: "codeNode", codeNode: CodeNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 56: {
-          if (tag !== 450) {
+        case 19: {
+          if (tag !== 154) {
             break;
           }
 
           message.node = { $case: "imageNode", imageNode: ImageNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 57: {
-          if (tag !== 458) {
+        case 20: {
+          if (tag !== 162) {
             break;
           }
 
           message.node = { $case: "linkNode", linkNode: LinkNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 58: {
-          if (tag !== 466) {
+        case 21: {
+          if (tag !== 170) {
             break;
           }
 
           message.node = { $case: "autoLinkNode", autoLinkNode: AutoLinkNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 59: {
-          if (tag !== 474) {
+        case 22: {
+          if (tag !== 178) {
             break;
           }
 
           message.node = { $case: "tagNode", tagNode: TagNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 60: {
-          if (tag !== 482) {
+        case 23: {
+          if (tag !== 186) {
             break;
           }
 
@@ -1437,8 +1192,8 @@ export const Node: MessageFns<Node> = {
           };
           continue;
         }
-        case 61: {
-          if (tag !== 490) {
+        case 24: {
+          if (tag !== 194) {
             break;
           }
 
@@ -1448,40 +1203,40 @@ export const Node: MessageFns<Node> = {
           };
           continue;
         }
-        case 62: {
-          if (tag !== 498) {
+        case 25: {
+          if (tag !== 202) {
             break;
           }
 
           message.node = { $case: "mathNode", mathNode: MathNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 63: {
-          if (tag !== 506) {
+        case 26: {
+          if (tag !== 210) {
             break;
           }
 
           message.node = { $case: "highlightNode", highlightNode: HighlightNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 64: {
-          if (tag !== 514) {
+        case 27: {
+          if (tag !== 218) {
             break;
           }
 
           message.node = { $case: "subscriptNode", subscriptNode: SubscriptNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 65: {
-          if (tag !== 522) {
+        case 28: {
+          if (tag !== 226) {
             break;
           }
 
           message.node = { $case: "superscriptNode", superscriptNode: SuperscriptNode.decode(reader, reader.uint32()) };
           continue;
         }
-        case 66: {
-          if (tag !== 530) {
+        case 29: {
+          if (tag !== 234) {
             break;
           }
 
@@ -1491,20 +1246,12 @@ export const Node: MessageFns<Node> = {
           };
           continue;
         }
-        case 67: {
-          if (tag !== 538) {
+        case 30: {
+          if (tag !== 242) {
             break;
           }
 
           message.node = { $case: "spoilerNode", spoilerNode: SpoilerNode.decode(reader, reader.uint32()) };
-          continue;
-        }
-        case 68: {
-          if (tag !== 546) {
-            break;
-          }
-
-          message.node = { $case: "htmlElementNode", htmlElementNode: HTMLElementNode.decode(reader, reader.uint32()) };
           continue;
         }
       }
@@ -1531,20 +1278,12 @@ export const Node: MessageFns<Node> = {
         ? { $case: "horizontalRuleNode", horizontalRuleNode: HorizontalRuleNode.fromJSON(object.horizontalRuleNode) }
         : isSet(object.blockquoteNode)
         ? { $case: "blockquoteNode", blockquoteNode: BlockquoteNode.fromJSON(object.blockquoteNode) }
-        : isSet(object.listNode)
-        ? { $case: "listNode", listNode: ListNode.fromJSON(object.listNode) }
-        : isSet(object.orderedListItemNode)
-        ? {
-          $case: "orderedListItemNode",
-          orderedListItemNode: OrderedListItemNode.fromJSON(object.orderedListItemNode),
-        }
-        : isSet(object.unorderedListItemNode)
-        ? {
-          $case: "unorderedListItemNode",
-          unorderedListItemNode: UnorderedListItemNode.fromJSON(object.unorderedListItemNode),
-        }
-        : isSet(object.taskListItemNode)
-        ? { $case: "taskListItemNode", taskListItemNode: TaskListItemNode.fromJSON(object.taskListItemNode) }
+        : isSet(object.orderedListNode)
+        ? { $case: "orderedListNode", orderedListNode: OrderedListNode.fromJSON(object.orderedListNode) }
+        : isSet(object.unorderedListNode)
+        ? { $case: "unorderedListNode", unorderedListNode: UnorderedListNode.fromJSON(object.unorderedListNode) }
+        : isSet(object.taskListNode)
+        ? { $case: "taskListNode", taskListNode: TaskListNode.fromJSON(object.taskListNode) }
         : isSet(object.mathBlockNode)
         ? { $case: "mathBlockNode", mathBlockNode: MathBlockNode.fromJSON(object.mathBlockNode) }
         : isSet(object.tableNode)
@@ -1594,8 +1333,6 @@ export const Node: MessageFns<Node> = {
         }
         : isSet(object.spoilerNode)
         ? { $case: "spoilerNode", spoilerNode: SpoilerNode.fromJSON(object.spoilerNode) }
-        : isSet(object.htmlElementNode)
-        ? { $case: "htmlElementNode", htmlElementNode: HTMLElementNode.fromJSON(object.htmlElementNode) }
         : undefined,
     };
   },
@@ -1623,17 +1360,14 @@ export const Node: MessageFns<Node> = {
     if (message.node?.$case === "blockquoteNode") {
       obj.blockquoteNode = BlockquoteNode.toJSON(message.node.blockquoteNode);
     }
-    if (message.node?.$case === "listNode") {
-      obj.listNode = ListNode.toJSON(message.node.listNode);
+    if (message.node?.$case === "orderedListNode") {
+      obj.orderedListNode = OrderedListNode.toJSON(message.node.orderedListNode);
     }
-    if (message.node?.$case === "orderedListItemNode") {
-      obj.orderedListItemNode = OrderedListItemNode.toJSON(message.node.orderedListItemNode);
+    if (message.node?.$case === "unorderedListNode") {
+      obj.unorderedListNode = UnorderedListNode.toJSON(message.node.unorderedListNode);
     }
-    if (message.node?.$case === "unorderedListItemNode") {
-      obj.unorderedListItemNode = UnorderedListItemNode.toJSON(message.node.unorderedListItemNode);
-    }
-    if (message.node?.$case === "taskListItemNode") {
-      obj.taskListItemNode = TaskListItemNode.toJSON(message.node.taskListItemNode);
+    if (message.node?.$case === "taskListNode") {
+      obj.taskListNode = TaskListNode.toJSON(message.node.taskListNode);
     }
     if (message.node?.$case === "mathBlockNode") {
       obj.mathBlockNode = MathBlockNode.toJSON(message.node.mathBlockNode);
@@ -1695,9 +1429,6 @@ export const Node: MessageFns<Node> = {
     if (message.node?.$case === "spoilerNode") {
       obj.spoilerNode = SpoilerNode.toJSON(message.node.spoilerNode);
     }
-    if (message.node?.$case === "htmlElementNode") {
-      obj.htmlElementNode = HTMLElementNode.toJSON(message.node.htmlElementNode);
-    }
     return obj;
   },
 
@@ -1755,38 +1486,32 @@ export const Node: MessageFns<Node> = {
         blockquoteNode: BlockquoteNode.fromPartial(object.node.blockquoteNode),
       };
     }
-    if (object.node?.$case === "listNode" && object.node?.listNode !== undefined && object.node?.listNode !== null) {
-      message.node = { $case: "listNode", listNode: ListNode.fromPartial(object.node.listNode) };
-    }
     if (
-      object.node?.$case === "orderedListItemNode" &&
-      object.node?.orderedListItemNode !== undefined &&
-      object.node?.orderedListItemNode !== null
+      object.node?.$case === "orderedListNode" &&
+      object.node?.orderedListNode !== undefined &&
+      object.node?.orderedListNode !== null
     ) {
       message.node = {
-        $case: "orderedListItemNode",
-        orderedListItemNode: OrderedListItemNode.fromPartial(object.node.orderedListItemNode),
+        $case: "orderedListNode",
+        orderedListNode: OrderedListNode.fromPartial(object.node.orderedListNode),
       };
     }
     if (
-      object.node?.$case === "unorderedListItemNode" &&
-      object.node?.unorderedListItemNode !== undefined &&
-      object.node?.unorderedListItemNode !== null
+      object.node?.$case === "unorderedListNode" &&
+      object.node?.unorderedListNode !== undefined &&
+      object.node?.unorderedListNode !== null
     ) {
       message.node = {
-        $case: "unorderedListItemNode",
-        unorderedListItemNode: UnorderedListItemNode.fromPartial(object.node.unorderedListItemNode),
+        $case: "unorderedListNode",
+        unorderedListNode: UnorderedListNode.fromPartial(object.node.unorderedListNode),
       };
     }
     if (
-      object.node?.$case === "taskListItemNode" &&
-      object.node?.taskListItemNode !== undefined &&
-      object.node?.taskListItemNode !== null
+      object.node?.$case === "taskListNode" &&
+      object.node?.taskListNode !== undefined &&
+      object.node?.taskListNode !== null
     ) {
-      message.node = {
-        $case: "taskListItemNode",
-        taskListItemNode: TaskListItemNode.fromPartial(object.node.taskListItemNode),
-      };
+      message.node = { $case: "taskListNode", taskListNode: TaskListNode.fromPartial(object.node.taskListNode) };
     }
     if (
       object.node?.$case === "mathBlockNode" &&
@@ -1911,16 +1636,6 @@ export const Node: MessageFns<Node> = {
       object.node?.spoilerNode !== null
     ) {
       message.node = { $case: "spoilerNode", spoilerNode: SpoilerNode.fromPartial(object.node.spoilerNode) };
-    }
-    if (
-      object.node?.$case === "htmlElementNode" &&
-      object.node?.htmlElementNode !== undefined &&
-      object.node?.htmlElementNode !== null
-    ) {
-      message.node = {
-        $case: "htmlElementNode",
-        htmlElementNode: HTMLElementNode.fromPartial(object.node.htmlElementNode),
-      };
     }
     return message;
   },
@@ -2299,104 +2014,12 @@ export const BlockquoteNode: MessageFns<BlockquoteNode> = {
   },
 };
 
-function createBaseListNode(): ListNode {
-  return { kind: ListNode_Kind.KIND_UNSPECIFIED, indent: 0, children: [] };
-}
-
-export const ListNode: MessageFns<ListNode> = {
-  encode(message: ListNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.kind !== ListNode_Kind.KIND_UNSPECIFIED) {
-      writer.uint32(8).int32(listNode_KindToNumber(message.kind));
-    }
-    if (message.indent !== 0) {
-      writer.uint32(16).int32(message.indent);
-    }
-    for (const v of message.children) {
-      Node.encode(v!, writer.uint32(26).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): ListNode {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseListNode();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.kind = listNode_KindFromJSON(reader.int32());
-          continue;
-        }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.indent = reader.int32();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.children.push(Node.decode(reader, reader.uint32()));
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): ListNode {
-    return {
-      kind: isSet(object.kind) ? listNode_KindFromJSON(object.kind) : ListNode_Kind.KIND_UNSPECIFIED,
-      indent: isSet(object.indent) ? globalThis.Number(object.indent) : 0,
-      children: globalThis.Array.isArray(object?.children) ? object.children.map((e: any) => Node.fromJSON(e)) : [],
-    };
-  },
-
-  toJSON(message: ListNode): unknown {
-    const obj: any = {};
-    if (message.kind !== ListNode_Kind.KIND_UNSPECIFIED) {
-      obj.kind = listNode_KindToJSON(message.kind);
-    }
-    if (message.indent !== 0) {
-      obj.indent = Math.round(message.indent);
-    }
-    if (message.children?.length) {
-      obj.children = message.children.map((e) => Node.toJSON(e));
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<ListNode>): ListNode {
-    return ListNode.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<ListNode>): ListNode {
-    const message = createBaseListNode();
-    message.kind = object.kind ?? ListNode_Kind.KIND_UNSPECIFIED;
-    message.indent = object.indent ?? 0;
-    message.children = object.children?.map((e) => Node.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseOrderedListItemNode(): OrderedListItemNode {
+function createBaseOrderedListNode(): OrderedListNode {
   return { number: "", indent: 0, children: [] };
 }
 
-export const OrderedListItemNode: MessageFns<OrderedListItemNode> = {
-  encode(message: OrderedListItemNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const OrderedListNode: MessageFns<OrderedListNode> = {
+  encode(message: OrderedListNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.number !== "") {
       writer.uint32(10).string(message.number);
     }
@@ -2409,10 +2032,10 @@ export const OrderedListItemNode: MessageFns<OrderedListItemNode> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): OrderedListItemNode {
+  decode(input: BinaryReader | Uint8Array, length?: number): OrderedListNode {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseOrderedListItemNode();
+    const message = createBaseOrderedListNode();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2449,7 +2072,7 @@ export const OrderedListItemNode: MessageFns<OrderedListItemNode> = {
     return message;
   },
 
-  fromJSON(object: any): OrderedListItemNode {
+  fromJSON(object: any): OrderedListNode {
     return {
       number: isSet(object.number) ? globalThis.String(object.number) : "",
       indent: isSet(object.indent) ? globalThis.Number(object.indent) : 0,
@@ -2457,7 +2080,7 @@ export const OrderedListItemNode: MessageFns<OrderedListItemNode> = {
     };
   },
 
-  toJSON(message: OrderedListItemNode): unknown {
+  toJSON(message: OrderedListNode): unknown {
     const obj: any = {};
     if (message.number !== "") {
       obj.number = message.number;
@@ -2471,11 +2094,11 @@ export const OrderedListItemNode: MessageFns<OrderedListItemNode> = {
     return obj;
   },
 
-  create(base?: DeepPartial<OrderedListItemNode>): OrderedListItemNode {
-    return OrderedListItemNode.fromPartial(base ?? {});
+  create(base?: DeepPartial<OrderedListNode>): OrderedListNode {
+    return OrderedListNode.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<OrderedListItemNode>): OrderedListItemNode {
-    const message = createBaseOrderedListItemNode();
+  fromPartial(object: DeepPartial<OrderedListNode>): OrderedListNode {
+    const message = createBaseOrderedListNode();
     message.number = object.number ?? "";
     message.indent = object.indent ?? 0;
     message.children = object.children?.map((e) => Node.fromPartial(e)) || [];
@@ -2483,12 +2106,12 @@ export const OrderedListItemNode: MessageFns<OrderedListItemNode> = {
   },
 };
 
-function createBaseUnorderedListItemNode(): UnorderedListItemNode {
+function createBaseUnorderedListNode(): UnorderedListNode {
   return { symbol: "", indent: 0, children: [] };
 }
 
-export const UnorderedListItemNode: MessageFns<UnorderedListItemNode> = {
-  encode(message: UnorderedListItemNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const UnorderedListNode: MessageFns<UnorderedListNode> = {
+  encode(message: UnorderedListNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.symbol !== "") {
       writer.uint32(10).string(message.symbol);
     }
@@ -2501,10 +2124,10 @@ export const UnorderedListItemNode: MessageFns<UnorderedListItemNode> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): UnorderedListItemNode {
+  decode(input: BinaryReader | Uint8Array, length?: number): UnorderedListNode {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseUnorderedListItemNode();
+    const message = createBaseUnorderedListNode();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2541,7 +2164,7 @@ export const UnorderedListItemNode: MessageFns<UnorderedListItemNode> = {
     return message;
   },
 
-  fromJSON(object: any): UnorderedListItemNode {
+  fromJSON(object: any): UnorderedListNode {
     return {
       symbol: isSet(object.symbol) ? globalThis.String(object.symbol) : "",
       indent: isSet(object.indent) ? globalThis.Number(object.indent) : 0,
@@ -2549,7 +2172,7 @@ export const UnorderedListItemNode: MessageFns<UnorderedListItemNode> = {
     };
   },
 
-  toJSON(message: UnorderedListItemNode): unknown {
+  toJSON(message: UnorderedListNode): unknown {
     const obj: any = {};
     if (message.symbol !== "") {
       obj.symbol = message.symbol;
@@ -2563,11 +2186,11 @@ export const UnorderedListItemNode: MessageFns<UnorderedListItemNode> = {
     return obj;
   },
 
-  create(base?: DeepPartial<UnorderedListItemNode>): UnorderedListItemNode {
-    return UnorderedListItemNode.fromPartial(base ?? {});
+  create(base?: DeepPartial<UnorderedListNode>): UnorderedListNode {
+    return UnorderedListNode.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<UnorderedListItemNode>): UnorderedListItemNode {
-    const message = createBaseUnorderedListItemNode();
+  fromPartial(object: DeepPartial<UnorderedListNode>): UnorderedListNode {
+    const message = createBaseUnorderedListNode();
     message.symbol = object.symbol ?? "";
     message.indent = object.indent ?? 0;
     message.children = object.children?.map((e) => Node.fromPartial(e)) || [];
@@ -2575,12 +2198,12 @@ export const UnorderedListItemNode: MessageFns<UnorderedListItemNode> = {
   },
 };
 
-function createBaseTaskListItemNode(): TaskListItemNode {
+function createBaseTaskListNode(): TaskListNode {
   return { symbol: "", indent: 0, complete: false, children: [] };
 }
 
-export const TaskListItemNode: MessageFns<TaskListItemNode> = {
-  encode(message: TaskListItemNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const TaskListNode: MessageFns<TaskListNode> = {
+  encode(message: TaskListNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.symbol !== "") {
       writer.uint32(10).string(message.symbol);
     }
@@ -2596,10 +2219,10 @@ export const TaskListItemNode: MessageFns<TaskListItemNode> = {
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): TaskListItemNode {
+  decode(input: BinaryReader | Uint8Array, length?: number): TaskListNode {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseTaskListItemNode();
+    const message = createBaseTaskListNode();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2644,7 +2267,7 @@ export const TaskListItemNode: MessageFns<TaskListItemNode> = {
     return message;
   },
 
-  fromJSON(object: any): TaskListItemNode {
+  fromJSON(object: any): TaskListNode {
     return {
       symbol: isSet(object.symbol) ? globalThis.String(object.symbol) : "",
       indent: isSet(object.indent) ? globalThis.Number(object.indent) : 0,
@@ -2653,7 +2276,7 @@ export const TaskListItemNode: MessageFns<TaskListItemNode> = {
     };
   },
 
-  toJSON(message: TaskListItemNode): unknown {
+  toJSON(message: TaskListNode): unknown {
     const obj: any = {};
     if (message.symbol !== "") {
       obj.symbol = message.symbol;
@@ -2670,11 +2293,11 @@ export const TaskListItemNode: MessageFns<TaskListItemNode> = {
     return obj;
   },
 
-  create(base?: DeepPartial<TaskListItemNode>): TaskListItemNode {
-    return TaskListItemNode.fromPartial(base ?? {});
+  create(base?: DeepPartial<TaskListNode>): TaskListNode {
+    return TaskListNode.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<TaskListItemNode>): TaskListItemNode {
-    const message = createBaseTaskListItemNode();
+  fromPartial(object: DeepPartial<TaskListNode>): TaskListNode {
+    const message = createBaseTaskListNode();
     message.symbol = object.symbol ?? "";
     message.indent = object.indent ?? 0;
     message.complete = object.complete ?? false;
@@ -2748,7 +2371,7 @@ function createBaseTableNode(): TableNode {
 export const TableNode: MessageFns<TableNode> = {
   encode(message: TableNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.header) {
-      Node.encode(v!, writer.uint32(10).fork()).join();
+      writer.uint32(10).string(v!);
     }
     for (const v of message.delimiter) {
       writer.uint32(18).string(v!);
@@ -2771,7 +2394,7 @@ export const TableNode: MessageFns<TableNode> = {
             break;
           }
 
-          message.header.push(Node.decode(reader, reader.uint32()));
+          message.header.push(reader.string());
           continue;
         }
         case 2: {
@@ -2801,7 +2424,7 @@ export const TableNode: MessageFns<TableNode> = {
 
   fromJSON(object: any): TableNode {
     return {
-      header: globalThis.Array.isArray(object?.header) ? object.header.map((e: any) => Node.fromJSON(e)) : [],
+      header: globalThis.Array.isArray(object?.header) ? object.header.map((e: any) => globalThis.String(e)) : [],
       delimiter: globalThis.Array.isArray(object?.delimiter)
         ? object.delimiter.map((e: any) => globalThis.String(e))
         : [],
@@ -2812,7 +2435,7 @@ export const TableNode: MessageFns<TableNode> = {
   toJSON(message: TableNode): unknown {
     const obj: any = {};
     if (message.header?.length) {
-      obj.header = message.header.map((e) => Node.toJSON(e));
+      obj.header = message.header;
     }
     if (message.delimiter?.length) {
       obj.delimiter = message.delimiter;
@@ -2828,7 +2451,7 @@ export const TableNode: MessageFns<TableNode> = {
   },
   fromPartial(object: DeepPartial<TableNode>): TableNode {
     const message = createBaseTableNode();
-    message.header = object.header?.map((e) => Node.fromPartial(e)) || [];
+    message.header = object.header?.map((e) => e) || [];
     message.delimiter = object.delimiter?.map((e) => e) || [];
     message.rows = object.rows?.map((e) => TableNode_Row.fromPartial(e)) || [];
     return message;
@@ -2842,7 +2465,7 @@ function createBaseTableNode_Row(): TableNode_Row {
 export const TableNode_Row: MessageFns<TableNode_Row> = {
   encode(message: TableNode_Row, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.cells) {
-      Node.encode(v!, writer.uint32(10).fork()).join();
+      writer.uint32(10).string(v!);
     }
     return writer;
   },
@@ -2859,7 +2482,7 @@ export const TableNode_Row: MessageFns<TableNode_Row> = {
             break;
           }
 
-          message.cells.push(Node.decode(reader, reader.uint32()));
+          message.cells.push(reader.string());
           continue;
         }
       }
@@ -2872,13 +2495,13 @@ export const TableNode_Row: MessageFns<TableNode_Row> = {
   },
 
   fromJSON(object: any): TableNode_Row {
-    return { cells: globalThis.Array.isArray(object?.cells) ? object.cells.map((e: any) => Node.fromJSON(e)) : [] };
+    return { cells: globalThis.Array.isArray(object?.cells) ? object.cells.map((e: any) => globalThis.String(e)) : [] };
   },
 
   toJSON(message: TableNode_Row): unknown {
     const obj: any = {};
     if (message.cells?.length) {
-      obj.cells = message.cells.map((e) => Node.toJSON(e));
+      obj.cells = message.cells;
     }
     return obj;
   },
@@ -2888,7 +2511,7 @@ export const TableNode_Row: MessageFns<TableNode_Row> = {
   },
   fromPartial(object: DeepPartial<TableNode_Row>): TableNode_Row {
     const message = createBaseTableNode_Row();
-    message.cells = object.cells?.map((e) => Node.fromPartial(e)) || [];
+    message.cells = object.cells?.map((e) => e) || [];
     return message;
   },
 };
@@ -4081,186 +3704,12 @@ export const SpoilerNode: MessageFns<SpoilerNode> = {
   },
 };
 
-function createBaseHTMLElementNode(): HTMLElementNode {
-  return { tagName: "", attributes: {} };
-}
-
-export const HTMLElementNode: MessageFns<HTMLElementNode> = {
-  encode(message: HTMLElementNode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.tagName !== "") {
-      writer.uint32(10).string(message.tagName);
-    }
-    Object.entries(message.attributes).forEach(([key, value]) => {
-      HTMLElementNode_AttributesEntry.encode({ key: key as any, value }, writer.uint32(18).fork()).join();
-    });
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): HTMLElementNode {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseHTMLElementNode();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.tagName = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          const entry2 = HTMLElementNode_AttributesEntry.decode(reader, reader.uint32());
-          if (entry2.value !== undefined) {
-            message.attributes[entry2.key] = entry2.value;
-          }
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): HTMLElementNode {
-    return {
-      tagName: isSet(object.tagName) ? globalThis.String(object.tagName) : "",
-      attributes: isObject(object.attributes)
-        ? Object.entries(object.attributes).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
-          return acc;
-        }, {})
-        : {},
-    };
-  },
-
-  toJSON(message: HTMLElementNode): unknown {
-    const obj: any = {};
-    if (message.tagName !== "") {
-      obj.tagName = message.tagName;
-    }
-    if (message.attributes) {
-      const entries = Object.entries(message.attributes);
-      if (entries.length > 0) {
-        obj.attributes = {};
-        entries.forEach(([k, v]) => {
-          obj.attributes[k] = v;
-        });
-      }
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<HTMLElementNode>): HTMLElementNode {
-    return HTMLElementNode.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<HTMLElementNode>): HTMLElementNode {
-    const message = createBaseHTMLElementNode();
-    message.tagName = object.tagName ?? "";
-    message.attributes = Object.entries(object.attributes ?? {}).reduce<{ [key: string]: string }>(
-      (acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[key] = globalThis.String(value);
-        }
-        return acc;
-      },
-      {},
-    );
-    return message;
-  },
-};
-
-function createBaseHTMLElementNode_AttributesEntry(): HTMLElementNode_AttributesEntry {
-  return { key: "", value: "" };
-}
-
-export const HTMLElementNode_AttributesEntry: MessageFns<HTMLElementNode_AttributesEntry> = {
-  encode(message: HTMLElementNode_AttributesEntry, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
-    }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): HTMLElementNode_AttributesEntry {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseHTMLElementNode_AttributesEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.key = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.value = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): HTMLElementNode_AttributesEntry {
-    return {
-      key: isSet(object.key) ? globalThis.String(object.key) : "",
-      value: isSet(object.value) ? globalThis.String(object.value) : "",
-    };
-  },
-
-  toJSON(message: HTMLElementNode_AttributesEntry): unknown {
-    const obj: any = {};
-    if (message.key !== "") {
-      obj.key = message.key;
-    }
-    if (message.value !== "") {
-      obj.value = message.value;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<HTMLElementNode_AttributesEntry>): HTMLElementNode_AttributesEntry {
-    return HTMLElementNode_AttributesEntry.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<HTMLElementNode_AttributesEntry>): HTMLElementNode_AttributesEntry {
-    const message = createBaseHTMLElementNode_AttributesEntry();
-    message.key = object.key ?? "";
-    message.value = object.value ?? "";
-    return message;
-  },
-};
-
 export type MarkdownServiceDefinition = typeof MarkdownServiceDefinition;
 export const MarkdownServiceDefinition = {
   name: "MarkdownService",
   fullName: "memos.api.v1.MarkdownService",
   methods: {
-    /** ParseMarkdown parses the given markdown content and returns a list of nodes. */
+    /** Parses the given markdown content and returns a list of nodes. */
     parseMarkdown: {
       name: "ParseMarkdown",
       requestType: ParseMarkdownRequest,
@@ -4293,7 +3742,7 @@ export const MarkdownServiceDefinition = {
               111,
               119,
               110,
-              58,
+              47,
               112,
               97,
               114,
@@ -4304,74 +3753,23 @@ export const MarkdownServiceDefinition = {
         },
       },
     },
-    /** RestoreMarkdownNodes restores the given nodes to markdown content. */
-    restoreMarkdownNodes: {
-      name: "RestoreMarkdownNodes",
-      requestType: RestoreMarkdownNodesRequest,
+    /** Restores the given nodes to markdown content. */
+    restoreMarkdown: {
+      name: "RestoreMarkdown",
+      requestType: RestoreMarkdownRequest,
       requestStream: false,
-      responseType: RestoreMarkdownNodesResponse,
+      responseType: RestoreMarkdownResponse,
       responseStream: false,
       options: {
         _unknownFields: {
           578365826: [
             new Uint8Array([
-              34,
-              58,
-              1,
-              42,
-              34,
               29,
-              47,
-              97,
-              112,
-              105,
-              47,
-              118,
-              49,
-              47,
-              109,
-              97,
-              114,
-              107,
-              100,
-              111,
-              119,
-              110,
-              47,
-              110,
-              111,
-              100,
-              101,
-              58,
-              114,
-              101,
-              115,
-              116,
-              111,
-              114,
-              101,
-            ]),
-          ],
-        },
-      },
-    },
-    /** StringifyMarkdownNodes stringify the given nodes to plain text content. */
-    stringifyMarkdownNodes: {
-      name: "StringifyMarkdownNodes",
-      requestType: StringifyMarkdownNodesRequest,
-      requestStream: false,
-      responseType: StringifyMarkdownNodesResponse,
-      responseStream: false,
-      options: {
-        _unknownFields: {
-          578365826: [
-            new Uint8Array([
-              36,
               58,
               1,
               42,
               34,
-              31,
+              24,
               47,
               97,
               112,
@@ -4388,21 +3786,14 @@ export const MarkdownServiceDefinition = {
               111,
               119,
               110,
-              47,
-              110,
-              111,
-              100,
-              101,
               58,
+              114,
+              101,
               115,
               116,
+              111,
               114,
-              105,
-              110,
-              103,
-              105,
-              102,
-              121,
+              101,
             ]),
           ],
         },
@@ -4468,10 +3859,6 @@ export type DeepPartial<T> = T extends Builtin ? T
   : T extends { $case: string } ? { [K in keyof Omit<T, "$case">]?: DeepPartial<T[K]> } & { $case: T["$case"] }
   : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
-
-function isObject(value: any): boolean {
-  return typeof value === "object" && value !== null;
-}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

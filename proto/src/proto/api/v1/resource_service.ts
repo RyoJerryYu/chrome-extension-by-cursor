@@ -46,6 +46,14 @@ export interface ListResourcesResponse {
   resources: Resource[];
 }
 
+export interface SearchResourcesRequest {
+  filter: string;
+}
+
+export interface SearchResourcesResponse {
+  resources: Resource[];
+}
+
 export interface GetResourceRequest {
   /**
    * The name of the resource.
@@ -53,11 +61,6 @@ export interface GetResourceRequest {
    * id is the system generated unique identifier.
    */
   name: string;
-}
-
-export interface GetResourceByUidRequest {
-  /** The uid of the resource. */
-  uid: string;
 }
 
 export interface GetResourceBinaryRequest {
@@ -69,8 +72,6 @@ export interface GetResourceBinaryRequest {
   name: string;
   /** The filename of the resource. Mainly used for downloading. */
   filename: string;
-  /** A flag indicating if the thumbnail version of the resource should be returned */
-  thumbnail: boolean;
 }
 
 export interface UpdateResourceRequest {
@@ -450,6 +451,126 @@ export const ListResourcesResponse: MessageFns<ListResourcesResponse> = {
   },
 };
 
+function createBaseSearchResourcesRequest(): SearchResourcesRequest {
+  return { filter: "" };
+}
+
+export const SearchResourcesRequest: MessageFns<SearchResourcesRequest> = {
+  encode(message: SearchResourcesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.filter !== "") {
+      writer.uint32(10).string(message.filter);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SearchResourcesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSearchResourcesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.filter = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SearchResourcesRequest {
+    return { filter: isSet(object.filter) ? globalThis.String(object.filter) : "" };
+  },
+
+  toJSON(message: SearchResourcesRequest): unknown {
+    const obj: any = {};
+    if (message.filter !== "") {
+      obj.filter = message.filter;
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<SearchResourcesRequest>): SearchResourcesRequest {
+    return SearchResourcesRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<SearchResourcesRequest>): SearchResourcesRequest {
+    const message = createBaseSearchResourcesRequest();
+    message.filter = object.filter ?? "";
+    return message;
+  },
+};
+
+function createBaseSearchResourcesResponse(): SearchResourcesResponse {
+  return { resources: [] };
+}
+
+export const SearchResourcesResponse: MessageFns<SearchResourcesResponse> = {
+  encode(message: SearchResourcesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.resources) {
+      Resource.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SearchResourcesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSearchResourcesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.resources.push(Resource.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SearchResourcesResponse {
+    return {
+      resources: globalThis.Array.isArray(object?.resources)
+        ? object.resources.map((e: any) => Resource.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: SearchResourcesResponse): unknown {
+    const obj: any = {};
+    if (message.resources?.length) {
+      obj.resources = message.resources.map((e) => Resource.toJSON(e));
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<SearchResourcesResponse>): SearchResourcesResponse {
+    return SearchResourcesResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<SearchResourcesResponse>): SearchResourcesResponse {
+    const message = createBaseSearchResourcesResponse();
+    message.resources = object.resources?.map((e) => Resource.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseGetResourceRequest(): GetResourceRequest {
   return { name: "" };
 }
@@ -508,66 +629,8 @@ export const GetResourceRequest: MessageFns<GetResourceRequest> = {
   },
 };
 
-function createBaseGetResourceByUidRequest(): GetResourceByUidRequest {
-  return { uid: "" };
-}
-
-export const GetResourceByUidRequest: MessageFns<GetResourceByUidRequest> = {
-  encode(message: GetResourceByUidRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.uid !== "") {
-      writer.uint32(10).string(message.uid);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): GetResourceByUidRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetResourceByUidRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.uid = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): GetResourceByUidRequest {
-    return { uid: isSet(object.uid) ? globalThis.String(object.uid) : "" };
-  },
-
-  toJSON(message: GetResourceByUidRequest): unknown {
-    const obj: any = {};
-    if (message.uid !== "") {
-      obj.uid = message.uid;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<GetResourceByUidRequest>): GetResourceByUidRequest {
-    return GetResourceByUidRequest.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<GetResourceByUidRequest>): GetResourceByUidRequest {
-    const message = createBaseGetResourceByUidRequest();
-    message.uid = object.uid ?? "";
-    return message;
-  },
-};
-
 function createBaseGetResourceBinaryRequest(): GetResourceBinaryRequest {
-  return { name: "", filename: "", thumbnail: false };
+  return { name: "", filename: "" };
 }
 
 export const GetResourceBinaryRequest: MessageFns<GetResourceBinaryRequest> = {
@@ -577,9 +640,6 @@ export const GetResourceBinaryRequest: MessageFns<GetResourceBinaryRequest> = {
     }
     if (message.filename !== "") {
       writer.uint32(18).string(message.filename);
-    }
-    if (message.thumbnail !== false) {
-      writer.uint32(24).bool(message.thumbnail);
     }
     return writer;
   },
@@ -607,14 +667,6 @@ export const GetResourceBinaryRequest: MessageFns<GetResourceBinaryRequest> = {
           message.filename = reader.string();
           continue;
         }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.thumbnail = reader.bool();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -628,7 +680,6 @@ export const GetResourceBinaryRequest: MessageFns<GetResourceBinaryRequest> = {
     return {
       name: isSet(object.name) ? globalThis.String(object.name) : "",
       filename: isSet(object.filename) ? globalThis.String(object.filename) : "",
-      thumbnail: isSet(object.thumbnail) ? globalThis.Boolean(object.thumbnail) : false,
     };
   },
 
@@ -640,9 +691,6 @@ export const GetResourceBinaryRequest: MessageFns<GetResourceBinaryRequest> = {
     if (message.filename !== "") {
       obj.filename = message.filename;
     }
-    if (message.thumbnail !== false) {
-      obj.thumbnail = message.thumbnail;
-    }
     return obj;
   },
 
@@ -653,7 +701,6 @@ export const GetResourceBinaryRequest: MessageFns<GetResourceBinaryRequest> = {
     const message = createBaseGetResourceBinaryRequest();
     message.name = object.name ?? "";
     message.filename = object.filename ?? "";
-    message.thumbnail = object.thumbnail ?? false;
     return message;
   },
 };
@@ -860,6 +907,49 @@ export const ResourceServiceDefinition = {
         },
       },
     },
+    /** SearchResources searches memos. */
+    searchResources: {
+      name: "SearchResources",
+      requestType: SearchResourcesRequest,
+      requestStream: false,
+      responseType: SearchResourcesResponse,
+      responseStream: false,
+      options: {
+        _unknownFields: {
+          578365826: [
+            new Uint8Array([
+              26,
+              18,
+              24,
+              47,
+              97,
+              112,
+              105,
+              47,
+              118,
+              49,
+              47,
+              114,
+              101,
+              115,
+              111,
+              117,
+              114,
+              99,
+              101,
+              115,
+              58,
+              115,
+              101,
+              97,
+              114,
+              99,
+              104,
+            ]),
+          ],
+        },
+      },
+    },
     /** GetResource returns a resource by name. */
     getResource: {
       name: "GetResource",
@@ -900,56 +990,6 @@ export const ResourceServiceDefinition = {
               115,
               47,
               42,
-              125,
-            ]),
-          ],
-        },
-      },
-    },
-    /** GetResourceByUid returns a resource by uid. */
-    getResourceByUid: {
-      name: "GetResourceByUid",
-      requestType: GetResourceByUidRequest,
-      requestStream: false,
-      responseType: Resource,
-      responseStream: false,
-      options: {
-        _unknownFields: {
-          8410: [new Uint8Array([3, 117, 105, 100])],
-          578365826: [
-            new Uint8Array([
-              32,
-              18,
-              30,
-              47,
-              97,
-              112,
-              105,
-              47,
-              118,
-              49,
-              47,
-              114,
-              101,
-              115,
-              111,
-              117,
-              114,
-              99,
-              101,
-              115,
-              58,
-              98,
-              121,
-              45,
-              117,
-              105,
-              100,
-              47,
-              123,
-              117,
-              105,
-              100,
               125,
             ]),
           ],

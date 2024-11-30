@@ -14,14 +14,12 @@ export interface MemoRelation {
    * The name of memo.
    * Format: "memos/{uid}"
    */
-  memo?:
-    | MemoRelation_Memo
-    | undefined;
+  memo: string;
   /**
    * The name of related memo.
    * Format: "memos/{uid}"
    */
-  relatedMemo?: MemoRelation_Memo | undefined;
+  relatedMemo: string;
   type: MemoRelation_Type;
 }
 
@@ -78,28 +76,17 @@ export function memoRelation_TypeToNumber(object: MemoRelation_Type): number {
   }
 }
 
-export interface MemoRelation_Memo {
-  /**
-   * The name of the memo.
-   * Format: memos/{id}
-   */
-  name: string;
-  uid: string;
-  /** The snippet of the memo content. Plain text only. */
-  snippet: string;
-}
-
 function createBaseMemoRelation(): MemoRelation {
-  return { memo: undefined, relatedMemo: undefined, type: MemoRelation_Type.TYPE_UNSPECIFIED };
+  return { memo: "", relatedMemo: "", type: MemoRelation_Type.TYPE_UNSPECIFIED };
 }
 
 export const MemoRelation: MessageFns<MemoRelation> = {
   encode(message: MemoRelation, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.memo !== undefined) {
-      MemoRelation_Memo.encode(message.memo, writer.uint32(10).fork()).join();
+    if (message.memo !== "") {
+      writer.uint32(10).string(message.memo);
     }
-    if (message.relatedMemo !== undefined) {
-      MemoRelation_Memo.encode(message.relatedMemo, writer.uint32(18).fork()).join();
+    if (message.relatedMemo !== "") {
+      writer.uint32(18).string(message.relatedMemo);
     }
     if (message.type !== MemoRelation_Type.TYPE_UNSPECIFIED) {
       writer.uint32(24).int32(memoRelation_TypeToNumber(message.type));
@@ -119,7 +106,7 @@ export const MemoRelation: MessageFns<MemoRelation> = {
             break;
           }
 
-          message.memo = MemoRelation_Memo.decode(reader, reader.uint32());
+          message.memo = reader.string();
           continue;
         }
         case 2: {
@@ -127,7 +114,7 @@ export const MemoRelation: MessageFns<MemoRelation> = {
             break;
           }
 
-          message.relatedMemo = MemoRelation_Memo.decode(reader, reader.uint32());
+          message.relatedMemo = reader.string();
           continue;
         }
         case 3: {
@@ -149,19 +136,19 @@ export const MemoRelation: MessageFns<MemoRelation> = {
 
   fromJSON(object: any): MemoRelation {
     return {
-      memo: isSet(object.memo) ? MemoRelation_Memo.fromJSON(object.memo) : undefined,
-      relatedMemo: isSet(object.relatedMemo) ? MemoRelation_Memo.fromJSON(object.relatedMemo) : undefined,
+      memo: isSet(object.memo) ? globalThis.String(object.memo) : "",
+      relatedMemo: isSet(object.relatedMemo) ? globalThis.String(object.relatedMemo) : "",
       type: isSet(object.type) ? memoRelation_TypeFromJSON(object.type) : MemoRelation_Type.TYPE_UNSPECIFIED,
     };
   },
 
   toJSON(message: MemoRelation): unknown {
     const obj: any = {};
-    if (message.memo !== undefined) {
-      obj.memo = MemoRelation_Memo.toJSON(message.memo);
+    if (message.memo !== "") {
+      obj.memo = message.memo;
     }
-    if (message.relatedMemo !== undefined) {
-      obj.relatedMemo = MemoRelation_Memo.toJSON(message.relatedMemo);
+    if (message.relatedMemo !== "") {
+      obj.relatedMemo = message.relatedMemo;
     }
     if (message.type !== MemoRelation_Type.TYPE_UNSPECIFIED) {
       obj.type = memoRelation_TypeToJSON(message.type);
@@ -174,105 +161,9 @@ export const MemoRelation: MessageFns<MemoRelation> = {
   },
   fromPartial(object: DeepPartial<MemoRelation>): MemoRelation {
     const message = createBaseMemoRelation();
-    message.memo = (object.memo !== undefined && object.memo !== null)
-      ? MemoRelation_Memo.fromPartial(object.memo)
-      : undefined;
-    message.relatedMemo = (object.relatedMemo !== undefined && object.relatedMemo !== null)
-      ? MemoRelation_Memo.fromPartial(object.relatedMemo)
-      : undefined;
+    message.memo = object.memo ?? "";
+    message.relatedMemo = object.relatedMemo ?? "";
     message.type = object.type ?? MemoRelation_Type.TYPE_UNSPECIFIED;
-    return message;
-  },
-};
-
-function createBaseMemoRelation_Memo(): MemoRelation_Memo {
-  return { name: "", uid: "", snippet: "" };
-}
-
-export const MemoRelation_Memo: MessageFns<MemoRelation_Memo> = {
-  encode(message: MemoRelation_Memo, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
-    }
-    if (message.uid !== "") {
-      writer.uint32(18).string(message.uid);
-    }
-    if (message.snippet !== "") {
-      writer.uint32(26).string(message.snippet);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): MemoRelation_Memo {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMemoRelation_Memo();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.name = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.uid = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.snippet = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MemoRelation_Memo {
-    return {
-      name: isSet(object.name) ? globalThis.String(object.name) : "",
-      uid: isSet(object.uid) ? globalThis.String(object.uid) : "",
-      snippet: isSet(object.snippet) ? globalThis.String(object.snippet) : "",
-    };
-  },
-
-  toJSON(message: MemoRelation_Memo): unknown {
-    const obj: any = {};
-    if (message.name !== "") {
-      obj.name = message.name;
-    }
-    if (message.uid !== "") {
-      obj.uid = message.uid;
-    }
-    if (message.snippet !== "") {
-      obj.snippet = message.snippet;
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<MemoRelation_Memo>): MemoRelation_Memo {
-    return MemoRelation_Memo.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<MemoRelation_Memo>): MemoRelation_Memo {
-    const message = createBaseMemoRelation_Memo();
-    message.name = object.name ?? "";
-    message.uid = object.uid ?? "";
-    message.snippet = object.snippet ?? "";
     return message;
   },
 };

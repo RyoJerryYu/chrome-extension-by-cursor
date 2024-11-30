@@ -19,15 +19,13 @@ export interface WorkspaceProfile {
   version: string;
   /** mode is the instance mode (e.g. "prod", "dev" or "demo"). */
   mode: string;
-  /** instance_url is the URL of the instance. */
-  instanceUrl: string;
 }
 
 export interface GetWorkspaceProfileRequest {
 }
 
 function createBaseWorkspaceProfile(): WorkspaceProfile {
-  return { owner: "", version: "", mode: "", instanceUrl: "" };
+  return { owner: "", version: "", mode: "" };
 }
 
 export const WorkspaceProfile: MessageFns<WorkspaceProfile> = {
@@ -40,9 +38,6 @@ export const WorkspaceProfile: MessageFns<WorkspaceProfile> = {
     }
     if (message.mode !== "") {
       writer.uint32(26).string(message.mode);
-    }
-    if (message.instanceUrl !== "") {
-      writer.uint32(50).string(message.instanceUrl);
     }
     return writer;
   },
@@ -78,14 +73,6 @@ export const WorkspaceProfile: MessageFns<WorkspaceProfile> = {
           message.mode = reader.string();
           continue;
         }
-        case 6: {
-          if (tag !== 50) {
-            break;
-          }
-
-          message.instanceUrl = reader.string();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -100,7 +87,6 @@ export const WorkspaceProfile: MessageFns<WorkspaceProfile> = {
       owner: isSet(object.owner) ? globalThis.String(object.owner) : "",
       version: isSet(object.version) ? globalThis.String(object.version) : "",
       mode: isSet(object.mode) ? globalThis.String(object.mode) : "",
-      instanceUrl: isSet(object.instanceUrl) ? globalThis.String(object.instanceUrl) : "",
     };
   },
 
@@ -115,9 +101,6 @@ export const WorkspaceProfile: MessageFns<WorkspaceProfile> = {
     if (message.mode !== "") {
       obj.mode = message.mode;
     }
-    if (message.instanceUrl !== "") {
-      obj.instanceUrl = message.instanceUrl;
-    }
     return obj;
   },
 
@@ -129,7 +112,6 @@ export const WorkspaceProfile: MessageFns<WorkspaceProfile> = {
     message.owner = object.owner ?? "";
     message.version = object.version ?? "";
     message.mode = object.mode ?? "";
-    message.instanceUrl = object.instanceUrl ?? "";
     return message;
   },
 };

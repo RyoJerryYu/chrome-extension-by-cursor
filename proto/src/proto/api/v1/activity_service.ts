@@ -11,12 +11,9 @@ import { Timestamp } from "../../google/protobuf/timestamp";
 export const protobufPackage = "memos.api.v1";
 
 export interface Activity {
-  /**
-   * The name of the activity.
-   * Format: activities/{id}
-   */
-  name: string;
-  /** The uid of the user who created the activity. */
+  /** The system-generated unique identifier for the activity. */
+  id: number;
+  /** The system-generated unique identifier for the user who created the activity. */
   creatorId: number;
   /** The type of the activity. */
   type: string;
@@ -28,11 +25,6 @@ export interface Activity {
     | undefined;
   /** The payload of the activity. */
   payload?: ActivityPayload | undefined;
-}
-
-export interface ActivityPayload {
-  memoComment?: ActivityMemoCommentPayload | undefined;
-  versionUpdate?: ActivityVersionUpdatePayload | undefined;
 }
 
 /** ActivityMemoCommentPayload represents the payload of a memo comment activity. */
@@ -48,22 +40,24 @@ export interface ActivityVersionUpdatePayload {
   version: string;
 }
 
+export interface ActivityPayload {
+  memoComment?: ActivityMemoCommentPayload | undefined;
+  versionUpdate?: ActivityVersionUpdatePayload | undefined;
+}
+
 export interface GetActivityRequest {
-  /**
-   * The name of the activity.
-   * Format: activities/{id}
-   */
-  name: string;
+  /** The system-generated unique identifier for the activity. */
+  id: number;
 }
 
 function createBaseActivity(): Activity {
-  return { name: "", creatorId: 0, type: "", level: "", createTime: undefined, payload: undefined };
+  return { id: 0, creatorId: 0, type: "", level: "", createTime: undefined, payload: undefined };
 }
 
 export const Activity: MessageFns<Activity> = {
   encode(message: Activity, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
+    if (message.id !== 0) {
+      writer.uint32(8).int32(message.id);
     }
     if (message.creatorId !== 0) {
       writer.uint32(16).int32(message.creatorId);
@@ -91,11 +85,11 @@ export const Activity: MessageFns<Activity> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.name = reader.string();
+          message.id = reader.int32();
           continue;
         }
         case 2: {
@@ -149,7 +143,7 @@ export const Activity: MessageFns<Activity> = {
 
   fromJSON(object: any): Activity {
     return {
-      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      id: isSet(object.id) ? globalThis.Number(object.id) : 0,
       creatorId: isSet(object.creatorId) ? globalThis.Number(object.creatorId) : 0,
       type: isSet(object.type) ? globalThis.String(object.type) : "",
       level: isSet(object.level) ? globalThis.String(object.level) : "",
@@ -160,8 +154,8 @@ export const Activity: MessageFns<Activity> = {
 
   toJSON(message: Activity): unknown {
     const obj: any = {};
-    if (message.name !== "") {
-      obj.name = message.name;
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
     }
     if (message.creatorId !== 0) {
       obj.creatorId = Math.round(message.creatorId);
@@ -186,95 +180,13 @@ export const Activity: MessageFns<Activity> = {
   },
   fromPartial(object: DeepPartial<Activity>): Activity {
     const message = createBaseActivity();
-    message.name = object.name ?? "";
+    message.id = object.id ?? 0;
     message.creatorId = object.creatorId ?? 0;
     message.type = object.type ?? "";
     message.level = object.level ?? "";
     message.createTime = object.createTime ?? undefined;
     message.payload = (object.payload !== undefined && object.payload !== null)
       ? ActivityPayload.fromPartial(object.payload)
-      : undefined;
-    return message;
-  },
-};
-
-function createBaseActivityPayload(): ActivityPayload {
-  return { memoComment: undefined, versionUpdate: undefined };
-}
-
-export const ActivityPayload: MessageFns<ActivityPayload> = {
-  encode(message: ActivityPayload, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.memoComment !== undefined) {
-      ActivityMemoCommentPayload.encode(message.memoComment, writer.uint32(10).fork()).join();
-    }
-    if (message.versionUpdate !== undefined) {
-      ActivityVersionUpdatePayload.encode(message.versionUpdate, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): ActivityPayload {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseActivityPayload();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.memoComment = ActivityMemoCommentPayload.decode(reader, reader.uint32());
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.versionUpdate = ActivityVersionUpdatePayload.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): ActivityPayload {
-    return {
-      memoComment: isSet(object.memoComment) ? ActivityMemoCommentPayload.fromJSON(object.memoComment) : undefined,
-      versionUpdate: isSet(object.versionUpdate)
-        ? ActivityVersionUpdatePayload.fromJSON(object.versionUpdate)
-        : undefined,
-    };
-  },
-
-  toJSON(message: ActivityPayload): unknown {
-    const obj: any = {};
-    if (message.memoComment !== undefined) {
-      obj.memoComment = ActivityMemoCommentPayload.toJSON(message.memoComment);
-    }
-    if (message.versionUpdate !== undefined) {
-      obj.versionUpdate = ActivityVersionUpdatePayload.toJSON(message.versionUpdate);
-    }
-    return obj;
-  },
-
-  create(base?: DeepPartial<ActivityPayload>): ActivityPayload {
-    return ActivityPayload.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<ActivityPayload>): ActivityPayload {
-    const message = createBaseActivityPayload();
-    message.memoComment = (object.memoComment !== undefined && object.memoComment !== null)
-      ? ActivityMemoCommentPayload.fromPartial(object.memoComment)
-      : undefined;
-    message.versionUpdate = (object.versionUpdate !== undefined && object.versionUpdate !== null)
-      ? ActivityVersionUpdatePayload.fromPartial(object.versionUpdate)
       : undefined;
     return message;
   },
@@ -414,14 +326,96 @@ export const ActivityVersionUpdatePayload: MessageFns<ActivityVersionUpdatePaylo
   },
 };
 
+function createBaseActivityPayload(): ActivityPayload {
+  return { memoComment: undefined, versionUpdate: undefined };
+}
+
+export const ActivityPayload: MessageFns<ActivityPayload> = {
+  encode(message: ActivityPayload, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.memoComment !== undefined) {
+      ActivityMemoCommentPayload.encode(message.memoComment, writer.uint32(10).fork()).join();
+    }
+    if (message.versionUpdate !== undefined) {
+      ActivityVersionUpdatePayload.encode(message.versionUpdate, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ActivityPayload {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseActivityPayload();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.memoComment = ActivityMemoCommentPayload.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.versionUpdate = ActivityVersionUpdatePayload.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ActivityPayload {
+    return {
+      memoComment: isSet(object.memoComment) ? ActivityMemoCommentPayload.fromJSON(object.memoComment) : undefined,
+      versionUpdate: isSet(object.versionUpdate)
+        ? ActivityVersionUpdatePayload.fromJSON(object.versionUpdate)
+        : undefined,
+    };
+  },
+
+  toJSON(message: ActivityPayload): unknown {
+    const obj: any = {};
+    if (message.memoComment !== undefined) {
+      obj.memoComment = ActivityMemoCommentPayload.toJSON(message.memoComment);
+    }
+    if (message.versionUpdate !== undefined) {
+      obj.versionUpdate = ActivityVersionUpdatePayload.toJSON(message.versionUpdate);
+    }
+    return obj;
+  },
+
+  create(base?: DeepPartial<ActivityPayload>): ActivityPayload {
+    return ActivityPayload.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<ActivityPayload>): ActivityPayload {
+    const message = createBaseActivityPayload();
+    message.memoComment = (object.memoComment !== undefined && object.memoComment !== null)
+      ? ActivityMemoCommentPayload.fromPartial(object.memoComment)
+      : undefined;
+    message.versionUpdate = (object.versionUpdate !== undefined && object.versionUpdate !== null)
+      ? ActivityVersionUpdatePayload.fromPartial(object.versionUpdate)
+      : undefined;
+    return message;
+  },
+};
+
 function createBaseGetActivityRequest(): GetActivityRequest {
-  return { name: "" };
+  return { id: 0 };
 }
 
 export const GetActivityRequest: MessageFns<GetActivityRequest> = {
   encode(message: GetActivityRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.name !== "") {
-      writer.uint32(10).string(message.name);
+    if (message.id !== 0) {
+      writer.uint32(8).int32(message.id);
     }
     return writer;
   },
@@ -434,11 +428,11 @@ export const GetActivityRequest: MessageFns<GetActivityRequest> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 10) {
+          if (tag !== 8) {
             break;
           }
 
-          message.name = reader.string();
+          message.id = reader.int32();
           continue;
         }
       }
@@ -451,13 +445,13 @@ export const GetActivityRequest: MessageFns<GetActivityRequest> = {
   },
 
   fromJSON(object: any): GetActivityRequest {
-    return { name: isSet(object.name) ? globalThis.String(object.name) : "" };
+    return { id: isSet(object.id) ? globalThis.Number(object.id) : 0 };
   },
 
   toJSON(message: GetActivityRequest): unknown {
     const obj: any = {};
-    if (message.name !== "") {
-      obj.name = message.name;
+    if (message.id !== 0) {
+      obj.id = Math.round(message.id);
     }
     return obj;
   },
@@ -467,7 +461,7 @@ export const GetActivityRequest: MessageFns<GetActivityRequest> = {
   },
   fromPartial(object: DeepPartial<GetActivityRequest>): GetActivityRequest {
     const message = createBaseGetActivityRequest();
-    message.name = object.name ?? "";
+    message.id = object.id ?? 0;
     return message;
   },
 };
@@ -486,12 +480,12 @@ export const ActivityServiceDefinition = {
       responseStream: false,
       options: {
         _unknownFields: {
-          8410: [new Uint8Array([4, 110, 97, 109, 101])],
+          8410: [new Uint8Array([2, 105, 100])],
           578365826: [
             new Uint8Array([
-              29,
+              25,
               18,
-              27,
+              23,
               47,
               97,
               112,
@@ -500,12 +494,6 @@ export const ActivityServiceDefinition = {
               118,
               49,
               47,
-              123,
-              110,
-              97,
-              109,
-              101,
-              61,
               97,
               99,
               116,
@@ -517,7 +505,9 @@ export const ActivityServiceDefinition = {
               101,
               115,
               47,
-              42,
+              123,
+              105,
+              100,
               125,
             ]),
           ],

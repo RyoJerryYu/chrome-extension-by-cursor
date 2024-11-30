@@ -26,28 +26,16 @@ export interface WorkspaceSetting {
 }
 
 export interface WorkspaceGeneralSetting {
-  /** disallow_user_registration disallows user registration. */
-  disallowUserRegistration: boolean;
-  /** disallow_password_auth disallows password authentication. */
-  disallowPasswordAuth: boolean;
+  /** disallow_signup is the flag to disallow signup. */
+  disallowSignup: boolean;
+  /** disallow_password_login is the flag to disallow password login. */
+  disallowPasswordLogin: boolean;
   /** additional_script is the additional script. */
   additionalScript: string;
   /** additional_style is the additional style. */
   additionalStyle: string;
   /** custom_profile is the custom profile. */
-  customProfile?:
-    | WorkspaceCustomProfile
-    | undefined;
-  /**
-   * week_start_day_offset is the week start day offset from Sunday.
-   * 0: Sunday, 1: Monday, 2: Tuesday, 3: Wednesday, 4: Thursday, 5: Friday, 6: Saturday
-   * Default is Sunday.
-   */
-  weekStartDayOffset: number;
-  /** disallow_change_username disallows changing username. */
-  disallowChangeUsername: boolean;
-  /** disallow_change_nickname disallows changing nickname. */
-  disallowChangeNickname: boolean;
+  customProfile?: WorkspaceCustomProfile | undefined;
 }
 
 export interface WorkspaceCustomProfile {
@@ -146,8 +134,8 @@ export interface WorkspaceStorageSetting_S3Config {
 }
 
 export interface WorkspaceMemoRelatedSetting {
-  /** disallow_public_visibility disallows set memo as public visibility. */
-  disallowPublicVisibility: boolean;
+  /** disallow_public_share disallows set memo as public visible. */
+  disallowPublicVisible: boolean;
   /** display_with_update_time orders and displays memo with update time. */
   displayWithUpdateTime: boolean;
   /** content_length_limit is the limit of content length. Unit is byte. */
@@ -156,18 +144,6 @@ export interface WorkspaceMemoRelatedSetting {
   enableAutoCompact: boolean;
   /** enable_double_click_edit enables editing on double click. */
   enableDoubleClickEdit: boolean;
-  /** enable_link_preview enables links preview. */
-  enableLinkPreview: boolean;
-  /** enable_comment enables comment. */
-  enableComment: boolean;
-  /** enable_location enables setting location for memo. */
-  enableLocation: boolean;
-  /** default_visibility set the global memos default visibility. */
-  defaultVisibility: string;
-  /** reactions is the list of reactions. */
-  reactions: string[];
-  /** disable_markdown_shortcuts disallow the registration of markdown shortcuts. */
-  disableMarkdownShortcuts: boolean;
 }
 
 export interface GetWorkspaceSettingRequest {
@@ -338,24 +314,21 @@ export const WorkspaceSetting: MessageFns<WorkspaceSetting> = {
 
 function createBaseWorkspaceGeneralSetting(): WorkspaceGeneralSetting {
   return {
-    disallowUserRegistration: false,
-    disallowPasswordAuth: false,
+    disallowSignup: false,
+    disallowPasswordLogin: false,
     additionalScript: "",
     additionalStyle: "",
     customProfile: undefined,
-    weekStartDayOffset: 0,
-    disallowChangeUsername: false,
-    disallowChangeNickname: false,
   };
 }
 
 export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
   encode(message: WorkspaceGeneralSetting, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.disallowUserRegistration !== false) {
-      writer.uint32(8).bool(message.disallowUserRegistration);
+    if (message.disallowSignup !== false) {
+      writer.uint32(8).bool(message.disallowSignup);
     }
-    if (message.disallowPasswordAuth !== false) {
-      writer.uint32(16).bool(message.disallowPasswordAuth);
+    if (message.disallowPasswordLogin !== false) {
+      writer.uint32(16).bool(message.disallowPasswordLogin);
     }
     if (message.additionalScript !== "") {
       writer.uint32(26).string(message.additionalScript);
@@ -365,15 +338,6 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
     }
     if (message.customProfile !== undefined) {
       WorkspaceCustomProfile.encode(message.customProfile, writer.uint32(42).fork()).join();
-    }
-    if (message.weekStartDayOffset !== 0) {
-      writer.uint32(48).int32(message.weekStartDayOffset);
-    }
-    if (message.disallowChangeUsername !== false) {
-      writer.uint32(56).bool(message.disallowChangeUsername);
-    }
-    if (message.disallowChangeNickname !== false) {
-      writer.uint32(64).bool(message.disallowChangeNickname);
     }
     return writer;
   },
@@ -390,7 +354,7 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
             break;
           }
 
-          message.disallowUserRegistration = reader.bool();
+          message.disallowSignup = reader.bool();
           continue;
         }
         case 2: {
@@ -398,7 +362,7 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
             break;
           }
 
-          message.disallowPasswordAuth = reader.bool();
+          message.disallowPasswordLogin = reader.bool();
           continue;
         }
         case 3: {
@@ -425,30 +389,6 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
           message.customProfile = WorkspaceCustomProfile.decode(reader, reader.uint32());
           continue;
         }
-        case 6: {
-          if (tag !== 48) {
-            break;
-          }
-
-          message.weekStartDayOffset = reader.int32();
-          continue;
-        }
-        case 7: {
-          if (tag !== 56) {
-            break;
-          }
-
-          message.disallowChangeUsername = reader.bool();
-          continue;
-        }
-        case 8: {
-          if (tag !== 64) {
-            break;
-          }
-
-          message.disallowChangeNickname = reader.bool();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -460,32 +400,23 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
 
   fromJSON(object: any): WorkspaceGeneralSetting {
     return {
-      disallowUserRegistration: isSet(object.disallowUserRegistration)
-        ? globalThis.Boolean(object.disallowUserRegistration)
-        : false,
-      disallowPasswordAuth: isSet(object.disallowPasswordAuth)
-        ? globalThis.Boolean(object.disallowPasswordAuth)
+      disallowSignup: isSet(object.disallowSignup) ? globalThis.Boolean(object.disallowSignup) : false,
+      disallowPasswordLogin: isSet(object.disallowPasswordLogin)
+        ? globalThis.Boolean(object.disallowPasswordLogin)
         : false,
       additionalScript: isSet(object.additionalScript) ? globalThis.String(object.additionalScript) : "",
       additionalStyle: isSet(object.additionalStyle) ? globalThis.String(object.additionalStyle) : "",
       customProfile: isSet(object.customProfile) ? WorkspaceCustomProfile.fromJSON(object.customProfile) : undefined,
-      weekStartDayOffset: isSet(object.weekStartDayOffset) ? globalThis.Number(object.weekStartDayOffset) : 0,
-      disallowChangeUsername: isSet(object.disallowChangeUsername)
-        ? globalThis.Boolean(object.disallowChangeUsername)
-        : false,
-      disallowChangeNickname: isSet(object.disallowChangeNickname)
-        ? globalThis.Boolean(object.disallowChangeNickname)
-        : false,
     };
   },
 
   toJSON(message: WorkspaceGeneralSetting): unknown {
     const obj: any = {};
-    if (message.disallowUserRegistration !== false) {
-      obj.disallowUserRegistration = message.disallowUserRegistration;
+    if (message.disallowSignup !== false) {
+      obj.disallowSignup = message.disallowSignup;
     }
-    if (message.disallowPasswordAuth !== false) {
-      obj.disallowPasswordAuth = message.disallowPasswordAuth;
+    if (message.disallowPasswordLogin !== false) {
+      obj.disallowPasswordLogin = message.disallowPasswordLogin;
     }
     if (message.additionalScript !== "") {
       obj.additionalScript = message.additionalScript;
@@ -496,15 +427,6 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
     if (message.customProfile !== undefined) {
       obj.customProfile = WorkspaceCustomProfile.toJSON(message.customProfile);
     }
-    if (message.weekStartDayOffset !== 0) {
-      obj.weekStartDayOffset = Math.round(message.weekStartDayOffset);
-    }
-    if (message.disallowChangeUsername !== false) {
-      obj.disallowChangeUsername = message.disallowChangeUsername;
-    }
-    if (message.disallowChangeNickname !== false) {
-      obj.disallowChangeNickname = message.disallowChangeNickname;
-    }
     return obj;
   },
 
@@ -513,16 +435,13 @@ export const WorkspaceGeneralSetting: MessageFns<WorkspaceGeneralSetting> = {
   },
   fromPartial(object: DeepPartial<WorkspaceGeneralSetting>): WorkspaceGeneralSetting {
     const message = createBaseWorkspaceGeneralSetting();
-    message.disallowUserRegistration = object.disallowUserRegistration ?? false;
-    message.disallowPasswordAuth = object.disallowPasswordAuth ?? false;
+    message.disallowSignup = object.disallowSignup ?? false;
+    message.disallowPasswordLogin = object.disallowPasswordLogin ?? false;
     message.additionalScript = object.additionalScript ?? "";
     message.additionalStyle = object.additionalStyle ?? "";
     message.customProfile = (object.customProfile !== undefined && object.customProfile !== null)
       ? WorkspaceCustomProfile.fromPartial(object.customProfile)
       : undefined;
-    message.weekStartDayOffset = object.weekStartDayOffset ?? 0;
-    message.disallowChangeUsername = object.disallowChangeUsername ?? false;
-    message.disallowChangeNickname = object.disallowChangeNickname ?? false;
     return message;
   },
 };
@@ -894,24 +813,18 @@ export const WorkspaceStorageSetting_S3Config: MessageFns<WorkspaceStorageSettin
 
 function createBaseWorkspaceMemoRelatedSetting(): WorkspaceMemoRelatedSetting {
   return {
-    disallowPublicVisibility: false,
+    disallowPublicVisible: false,
     displayWithUpdateTime: false,
     contentLengthLimit: 0,
     enableAutoCompact: false,
     enableDoubleClickEdit: false,
-    enableLinkPreview: false,
-    enableComment: false,
-    enableLocation: false,
-    defaultVisibility: "",
-    reactions: [],
-    disableMarkdownShortcuts: false,
   };
 }
 
 export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting> = {
   encode(message: WorkspaceMemoRelatedSetting, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.disallowPublicVisibility !== false) {
-      writer.uint32(8).bool(message.disallowPublicVisibility);
+    if (message.disallowPublicVisible !== false) {
+      writer.uint32(8).bool(message.disallowPublicVisible);
     }
     if (message.displayWithUpdateTime !== false) {
       writer.uint32(16).bool(message.displayWithUpdateTime);
@@ -924,24 +837,6 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
     }
     if (message.enableDoubleClickEdit !== false) {
       writer.uint32(40).bool(message.enableDoubleClickEdit);
-    }
-    if (message.enableLinkPreview !== false) {
-      writer.uint32(48).bool(message.enableLinkPreview);
-    }
-    if (message.enableComment !== false) {
-      writer.uint32(56).bool(message.enableComment);
-    }
-    if (message.enableLocation !== false) {
-      writer.uint32(64).bool(message.enableLocation);
-    }
-    if (message.defaultVisibility !== "") {
-      writer.uint32(74).string(message.defaultVisibility);
-    }
-    for (const v of message.reactions) {
-      writer.uint32(82).string(v!);
-    }
-    if (message.disableMarkdownShortcuts !== false) {
-      writer.uint32(88).bool(message.disableMarkdownShortcuts);
     }
     return writer;
   },
@@ -958,7 +853,7 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
             break;
           }
 
-          message.disallowPublicVisibility = reader.bool();
+          message.disallowPublicVisible = reader.bool();
           continue;
         }
         case 2: {
@@ -993,54 +888,6 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
           message.enableDoubleClickEdit = reader.bool();
           continue;
         }
-        case 6: {
-          if (tag !== 48) {
-            break;
-          }
-
-          message.enableLinkPreview = reader.bool();
-          continue;
-        }
-        case 7: {
-          if (tag !== 56) {
-            break;
-          }
-
-          message.enableComment = reader.bool();
-          continue;
-        }
-        case 8: {
-          if (tag !== 64) {
-            break;
-          }
-
-          message.enableLocation = reader.bool();
-          continue;
-        }
-        case 9: {
-          if (tag !== 74) {
-            break;
-          }
-
-          message.defaultVisibility = reader.string();
-          continue;
-        }
-        case 10: {
-          if (tag !== 82) {
-            break;
-          }
-
-          message.reactions.push(reader.string());
-          continue;
-        }
-        case 11: {
-          if (tag !== 88) {
-            break;
-          }
-
-          message.disableMarkdownShortcuts = reader.bool();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1052,8 +899,8 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
 
   fromJSON(object: any): WorkspaceMemoRelatedSetting {
     return {
-      disallowPublicVisibility: isSet(object.disallowPublicVisibility)
-        ? globalThis.Boolean(object.disallowPublicVisibility)
+      disallowPublicVisible: isSet(object.disallowPublicVisible)
+        ? globalThis.Boolean(object.disallowPublicVisible)
         : false,
       displayWithUpdateTime: isSet(object.displayWithUpdateTime)
         ? globalThis.Boolean(object.displayWithUpdateTime)
@@ -1063,23 +910,13 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
       enableDoubleClickEdit: isSet(object.enableDoubleClickEdit)
         ? globalThis.Boolean(object.enableDoubleClickEdit)
         : false,
-      enableLinkPreview: isSet(object.enableLinkPreview) ? globalThis.Boolean(object.enableLinkPreview) : false,
-      enableComment: isSet(object.enableComment) ? globalThis.Boolean(object.enableComment) : false,
-      enableLocation: isSet(object.enableLocation) ? globalThis.Boolean(object.enableLocation) : false,
-      defaultVisibility: isSet(object.defaultVisibility) ? globalThis.String(object.defaultVisibility) : "",
-      reactions: globalThis.Array.isArray(object?.reactions)
-        ? object.reactions.map((e: any) => globalThis.String(e))
-        : [],
-      disableMarkdownShortcuts: isSet(object.disableMarkdownShortcuts)
-        ? globalThis.Boolean(object.disableMarkdownShortcuts)
-        : false,
     };
   },
 
   toJSON(message: WorkspaceMemoRelatedSetting): unknown {
     const obj: any = {};
-    if (message.disallowPublicVisibility !== false) {
-      obj.disallowPublicVisibility = message.disallowPublicVisibility;
+    if (message.disallowPublicVisible !== false) {
+      obj.disallowPublicVisible = message.disallowPublicVisible;
     }
     if (message.displayWithUpdateTime !== false) {
       obj.displayWithUpdateTime = message.displayWithUpdateTime;
@@ -1093,24 +930,6 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
     if (message.enableDoubleClickEdit !== false) {
       obj.enableDoubleClickEdit = message.enableDoubleClickEdit;
     }
-    if (message.enableLinkPreview !== false) {
-      obj.enableLinkPreview = message.enableLinkPreview;
-    }
-    if (message.enableComment !== false) {
-      obj.enableComment = message.enableComment;
-    }
-    if (message.enableLocation !== false) {
-      obj.enableLocation = message.enableLocation;
-    }
-    if (message.defaultVisibility !== "") {
-      obj.defaultVisibility = message.defaultVisibility;
-    }
-    if (message.reactions?.length) {
-      obj.reactions = message.reactions;
-    }
-    if (message.disableMarkdownShortcuts !== false) {
-      obj.disableMarkdownShortcuts = message.disableMarkdownShortcuts;
-    }
     return obj;
   },
 
@@ -1119,17 +938,11 @@ export const WorkspaceMemoRelatedSetting: MessageFns<WorkspaceMemoRelatedSetting
   },
   fromPartial(object: DeepPartial<WorkspaceMemoRelatedSetting>): WorkspaceMemoRelatedSetting {
     const message = createBaseWorkspaceMemoRelatedSetting();
-    message.disallowPublicVisibility = object.disallowPublicVisibility ?? false;
+    message.disallowPublicVisible = object.disallowPublicVisible ?? false;
     message.displayWithUpdateTime = object.displayWithUpdateTime ?? false;
     message.contentLengthLimit = object.contentLengthLimit ?? 0;
     message.enableAutoCompact = object.enableAutoCompact ?? false;
     message.enableDoubleClickEdit = object.enableDoubleClickEdit ?? false;
-    message.enableLinkPreview = object.enableLinkPreview ?? false;
-    message.enableComment = object.enableComment ?? false;
-    message.enableLocation = object.enableLocation ?? false;
-    message.defaultVisibility = object.defaultVisibility ?? "";
-    message.reactions = object.reactions?.map((e) => e) || [];
-    message.disableMarkdownShortcuts = object.disableMarkdownShortcuts ?? false;
     return message;
   },
 };
