@@ -24,3 +24,5 @@ A modern Chrome Extension template built with React, TypeScript, and Webpack. Fe
 - pnpm (v6 or higher)
 
 ### Installation 
+
+...
