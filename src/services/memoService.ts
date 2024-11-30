@@ -7,8 +7,6 @@ export class MemoService {
     const request: CreateMemoRequest = {
       content,
       visibility: Visibility.PRIVATE,
-      resources: [],
-      relations: [],
     };
 
     return await client.memo.createMemo(request);
