@@ -12,14 +12,23 @@ export default function Popup() {
   const handleTagSelect = (tag: string) => {
     const textarea = document.querySelector('textarea');
     if (textarea) {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const newContent = content.substring(0, start) + tag + content.substring(end);
+      const startAt = textarea.selectionStart;
+      const endAt = textarea.selectionEnd;
+      let start = content.substring(0, startAt).trimEnd();
+      if (start.length !== 0) {
+        start += " ";
+      }
+      let end = content.substring(endAt).trimStart();
+      if (end.length !== 0) {
+        end = " " + end;
+      }
+      const newContent = start + tag + end;
+      const cursorAt = start.length + tag.length;
       setContent(newContent);
       // Set cursor position after the inserted tag
       setTimeout(() => {
         textarea.focus();
-        textarea.setSelectionRange(start + tag.length, start + tag.length);
+        textarea.setSelectionRange(cursorAt, cursorAt);
       }, 0);
     } else {
       setContent(content + tag);
