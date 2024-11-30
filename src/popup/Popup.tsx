@@ -3,7 +3,6 @@ import {
   Box, 
   Typography, 
   TextField, 
-  Button, 
   IconButton,
   Stack,
   Paper,
@@ -13,6 +12,8 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Button,
+  Tooltip,
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import LinkIcon from '@mui/icons-material/Link';
@@ -205,40 +206,47 @@ export default function Popup() {
         <TagSelector onSelectTag={handleTagSelect} />
 
         {/* Action Buttons */}
-        <Stack direction="row" spacing={1}>
-          <Button
-            startIcon={<LinkIcon />}
-            variant="outlined"
-            onClick={insertCurrentPage}
-            fullWidth
-          >
-            Insert Page
-          </Button>
-          <Button
-            startIcon={<AddTaskIcon />}
-            variant="outlined"
-            onClick={insertTask}
-            fullWidth
-          >
-            Add Task
-          </Button>
-          <Button
-            startIcon={<AttachFileIcon />}
-            variant="outlined"
-            onClick={handleFileClick}
-            disabled={isLoading}
-            fullWidth
-          >
-            Files
-          </Button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileSelect}
-            style={{ display: 'none' }}
-            multiple
-          />
-        </Stack>
+        <Paper variant="outlined" sx={{ p: 1 }}>
+          <Stack direction="row" spacing={1} justifyContent="flex-start">
+            <Tooltip title="Insert Current Page">
+              <IconButton
+                onClick={insertCurrentPage}
+                disabled={isLoading}
+                color="primary"
+                size="small"
+              >
+                <LinkIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add Task Checkbox">
+              <IconButton
+                onClick={insertTask}
+                disabled={isLoading}
+                color="primary"
+                size="small"
+              >
+                <AddTaskIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Attach Files">
+              <IconButton
+                onClick={handleFileClick}
+                disabled={isLoading}
+                color="primary"
+                size="small"
+              >
+                <AttachFileIcon />
+              </IconButton>
+            </Tooltip>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+              multiple
+            />
+          </Stack>
+        </Paper>
 
         {/* Main Content */}
         <TextField
