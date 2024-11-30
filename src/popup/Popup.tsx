@@ -9,15 +9,11 @@ import {
   Alert,
   AlertTitle,
   List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
   Button,
   Tooltip,
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import LinkIcon from '@mui/icons-material/Link';
-import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import { memoService } from "../services/memoService";
@@ -26,6 +22,7 @@ import { Memo } from "../../proto/src/proto/api/v1/memo_service";
 import { Resource } from "../../proto/src/proto/api/v1/resource_service";
 import { TagSelector } from "./TagSelector";
 import { FileUploadButton } from "./FileUploadButton";
+import { FileItem } from "./FileItem";
 
 export default function Popup() {
   const [content, setContent] = useState("");
@@ -238,29 +235,17 @@ export default function Popup() {
         {selectedFiles.length > 0 && (
           <Paper variant="outlined" sx={{ p: 1 }}>
             <List dense sx={{ 
-              maxHeight: 100, 
+              maxHeight: 200,
               overflowY: 'auto',
               bgcolor: 'grey.50',
               borderRadius: 1
             }}>
               {selectedFiles.map((file, index) => (
-                <ListItem key={index} sx={{ py: 0 }}>
-                  <ListItemText 
-                    primary={file.name}
-                    secondary={`${(file.size / 1024).toFixed(1)} KB`}
-                    primaryTypographyProps={{ variant: 'body2' }}
-                    secondaryTypographyProps={{ variant: 'caption' }}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      size="small"
-                      onClick={() => handleRemoveFile(index)}
-                    >
-                      <CloseIcon fontSize="small" />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                <FileItem
+                  key={index}
+                  file={file}
+                  onRemove={() => handleRemoveFile(index)}
+                />
               ))}
             </List>
           </Paper>
