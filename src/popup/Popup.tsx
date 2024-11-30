@@ -248,6 +248,7 @@ export default function Popup() {
                     size="small"
                     onClick={() => handleTagSelect(name)}
                     variant="outlined"
+                    icon={<TagIcon />}
                   />
                 ))}
               </Box>

@@ -7,7 +7,7 @@ import {
   Stack,
   Paper 
 } from '@mui/material';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import TagIcon from '@mui/icons-material/Tag';
 
 interface TagSelectorProps {
   onSelectTag: (tag: string) => void;
@@ -38,7 +38,7 @@ export function TagSelector({ onSelectTag }: TagSelectorProps) {
               key={tag}
               label={tag}
               size="small"
-              icon={<LocalOfferIcon />}
+              icon={<TagIcon />}
               onClick={() => onSelectTag(tag)}
               variant="outlined"
             />
