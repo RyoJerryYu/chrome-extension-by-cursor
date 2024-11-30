@@ -145,4 +145,26 @@ button:disabled {
 
 .remove-file:hover {
   background: #dc2626;
+}
+
+.actions-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.action-button {
+  padding: 0.5rem;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex: 1;
+}
+
+.action-button:hover {
+  background-color: #4b5563;
 } 

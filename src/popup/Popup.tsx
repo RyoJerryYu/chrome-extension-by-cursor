@@ -111,6 +111,39 @@ export default function Popup() {
     }
   };
 
+  const insertCurrentPage = async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab.url && tab.title) {
+        const markdownLink = `[${tab.title}](${tab.url})`;
+        const textarea = document.querySelector("textarea");
+        if (textarea) {
+          const startAt = textarea.selectionStart;
+          const endAt = textarea.selectionEnd;
+          let start = content.substring(0, startAt).trimEnd();
+          if (start.length !== 0) {
+            start += " ";
+          }
+          let end = content.substring(endAt).trimStart();
+          if (end.length !== 0) {
+            end = " " + end;
+          }
+          const newContent = start + markdownLink + end;
+          const cursorAt = start.length + markdownLink.length;
+          setContent(newContent);
+          setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(cursorAt, cursorAt);
+          }, 0);
+        } else {
+          setContent(content + markdownLink);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to get current tab:', err);
+    }
+  };
+
   return (
     <div className="popup-container">
       <h1 className="text-xl font-bold mb-4">Create Memo</h1>
@@ -143,6 +176,16 @@ export default function Popup() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="actions-section mb-2">
+        <button
+          type="button"
+          className="action-button"
+          onClick={insertCurrentPage}
+        >
+          Insert Current Page
+        </button>
       </div>
 
       <form onSubmit={handleSubmit}>
