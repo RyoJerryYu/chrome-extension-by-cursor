@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Container,
@@ -8,12 +8,10 @@ import {
 } from "@mui/material";
 import { ConnectionSettings } from "./ConnectionSettings";
 import { TagsManagement } from "./TagsManagement";
+import { useStatusMessage } from "../hooks/useStatusMessage";
 
 export default function Options() {
-  const [status, setStatus] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
+  const { status, showStatus, handleOperation } = useStatusMessage();
 
   return (
     <Container maxWidth="sm">
@@ -23,18 +21,21 @@ export default function Options() {
         </Typography>
 
         <Stack spacing={3}>
-          {/* Connection Settings */}
-          <ConnectionSettings setStatus={setStatus} />
-
-          {/* Tags Management Section */}
-          <TagsManagement setStatus={setStatus} />
+          <ConnectionSettings 
+            showStatus={showStatus} 
+            handleOperation={handleOperation}
+          />
+          <TagsManagement 
+            showStatus={showStatus} 
+            handleOperation={handleOperation}
+          />
         </Stack>
 
         {status && (
           <Alert
             severity={status.type}
             sx={{ mt: 2 }}
-            onClose={() => setStatus(null)}
+            onClose={() => showStatus("", "success")}
           >
             {status.message}
           </Alert>

@@ -7,12 +7,14 @@ import {
   Paper,
 } from "@mui/material";
 import { resetMemosClient } from "../grpc/client";
+import { ShowStatus, HandleOperation } from "../hooks/useStatusMessage";
 
 interface ConnectionSettingsProps {
-  setStatus: (status: { message: string; type: "success" | "error" } | null) => void;
+  showStatus: ShowStatus;
+  handleOperation: HandleOperation;
 }
 
-export function ConnectionSettings({ setStatus }: ConnectionSettingsProps) {
+export function ConnectionSettings({ showStatus, handleOperation }: ConnectionSettingsProps) {
   const [endpoint, setEndpoint] = useState("");
   const [token, setToken] = useState("");
 
@@ -25,22 +27,23 @@ export function ConnectionSettings({ setStatus }: ConnectionSettingsProps) {
 
   const handleSaveSettings = async () => {
     if (!endpoint.trim() || !token.trim()) {
-      setStatus({ message: "Please fill in all required fields", type: "error" });
+      showStatus("Please fill in all required fields", "error");
       return;
     }
 
-    try {
-      await chrome.storage.sync.set({
-        endpoint: endpoint.trim(),
-        token: token.trim(),
-      });
-      resetMemosClient();
-      setStatus({ message: "Settings saved successfully!", type: "success" });
-    } catch (err) {
-      setStatus({ message: "Failed to save settings", type: "error" });
-    }
-
-    setTimeout(() => setStatus(null), 3000);
+    await handleOperation(
+      async () => {
+        await chrome.storage.sync.set({
+          endpoint: endpoint.trim(),
+          token: token.trim(),
+        });
+        resetMemosClient();
+      },
+      {
+        successMessage: "Settings saved successfully!",
+        errorMessage: "Failed to save settings",
+      }
+    );
   };
 
   return (

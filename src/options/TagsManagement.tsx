@@ -15,6 +15,7 @@ import {
   Refresh as RefreshIcon,
 } from "@mui/icons-material";
 import { memoService } from "../services/memoService";
+import { ShowStatus, HandleOperation } from "../hooks/useStatusMessage";
 
 interface TagWithCount {
   name: string;
@@ -22,10 +23,11 @@ interface TagWithCount {
 }
 
 interface TagsManagementProps {
-  setStatus: (status: { message: string; type: "success" | "error" } | null) => void;
+  showStatus: ShowStatus;
+  handleOperation: HandleOperation;
 }
 
-export function TagsManagement({ setStatus }: TagsManagementProps) {
+export function TagsManagement({ showStatus, handleOperation }: TagsManagementProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [fetchedTags, setFetchedTags] = useState<TagWithCount[]>([]);
@@ -40,30 +42,34 @@ export function TagsManagement({ setStatus }: TagsManagementProps) {
   const handleAddTag = async () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
       const updatedTags = [...tags, newTag.trim()];
-      setTags(updatedTags);
       
-      try {
-        await chrome.storage.sync.set({ tags: updatedTags });
-        setNewTag("");
-        setStatus({ message: "Tag added successfully!", type: "success" });
-      } catch (err) {
-        setStatus({ message: "Failed to save tag", type: "error" });
-      }
-      setTimeout(() => setStatus(null), 1500);
+      await handleOperation(
+        async () => {
+          await chrome.storage.sync.set({ tags: updatedTags });
+          setTags(updatedTags);
+          setNewTag("");
+        },
+        {
+          successMessage: "Tag added successfully!",
+          errorMessage: "Failed to save tag",
+        }
+      );
     }
   };
 
   const handleRemoveTag = async (tagToRemove: string) => {
     const updatedTags = tags.filter((tag) => tag !== tagToRemove);
-    setTags(updatedTags);
     
-    try {
-      await chrome.storage.sync.set({ tags: updatedTags });
-      setStatus({ message: "Tag removed successfully!", type: "success" });
-    } catch (err) {
-      setStatus({ message: "Failed to remove tag", type: "error" });
-    }
-    setTimeout(() => setStatus(null), 1500);
+    await handleOperation(
+      async () => {
+        await chrome.storage.sync.set({ tags: updatedTags });
+        setTags(updatedTags);
+      },
+      {
+        successMessage: "Tag removed successfully!",
+        errorMessage: "Failed to remove tag",
+      }
+    );
   };
 
   const handleFetchTags = async () => {
@@ -75,10 +81,10 @@ export function TagsManagement({ setStatus }: TagsManagementProps) {
         .sort((a, b) => b.count - a.count);
       setFetchedTags(tagList);
     } catch (err) {
-      setStatus({
-        message: err instanceof Error ? err.message : "Failed to fetch tags",
-        type: "error",
-      });
+      showStatus(
+        err instanceof Error ? err.message : "Failed to fetch tags",
+        "error"
+      );
     } finally {
       setIsFetching(false);
     }
@@ -88,13 +94,16 @@ export function TagsManagement({ setStatus }: TagsManagementProps) {
     if (!tags.includes(tagName)) {
       const updatedTags = [...tags, tagName];
       
-      try {
-        await chrome.storage.sync.set({ tags: updatedTags });
-        setStatus({ message: `Added tag: ${tagName}`, type: "success" });
-      } catch (err) {
-        setStatus({ message: "Failed to import tag", type: "error" });
-      }
-      setTimeout(() => setStatus(null), 1500);
+      await handleOperation(
+        async () => {
+          await chrome.storage.sync.set({ tags: updatedTags });
+          setTags(updatedTags);
+        },
+        {
+          successMessage: `Added tag: ${tagName}`,
+          errorMessage: "Failed to import tag",
+        }
+      );
     }
   };
 
@@ -195,4 +204,4 @@ export function TagsManagement({ setStatus }: TagsManagementProps) {
       </Stack>
     </Paper>
   );
-} 
+}
