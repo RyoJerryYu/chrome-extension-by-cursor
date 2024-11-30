@@ -1,9 +1,9 @@
 import { CreateMemoRequest, Memo, Visibility } from '../../proto/src/proto/api/v1/memo_service';
-import { getMemoServiceClient } from '../grpc/client';
+import { getMemosClient } from '../grpc/client';
 
 export class MemoService {
   async createMemo(content: string): Promise<Memo> {
-    const client = await getMemoServiceClient();
+    const client = await getMemosClient();
     const request: CreateMemoRequest = {
       content,
       visibility: Visibility.PRIVATE,
@@ -11,7 +11,7 @@ export class MemoService {
       relations: [],
     };
 
-    return await client.createMemo(request);
+    return await client.memo.createMemo(request);
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { resetMemosClient } from '../grpc/client';
 import './Options.css';
 
 export default function Options() {
@@ -22,6 +23,8 @@ export default function Options() {
         endpoint: endpoint.trim(),
         token: token.trim()
       });
+      // Reset the gRPC client so it will be recreated with new settings
+      resetMemosClient();
       setStatus({ message: 'Settings saved successfully!', type: 'success' });
     } catch (err) {
       setStatus({ message: 'Failed to save settings', type: 'error' });
