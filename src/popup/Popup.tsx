@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { 
-  Box, 
-  Typography, 
-  TextField, 
+import {
+  Box,
+  Typography,
+  TextField,
   Stack,
   Paper,
   Alert,
   AlertTitle,
   List,
-  Button,
   Tooltip,
-} from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+} from "@mui/material";
 
 import { Memo } from "../../proto/src/proto/api/v1/memo_service";
 import { TagSelector } from "./TagSelector";
@@ -20,6 +18,7 @@ import { FileItem } from "./FileItem";
 import { InsertPageButton } from "./InsertPageButton";
 import { InsertTaskButton } from "./InsertTaskButton";
 import { SubmitButton } from "./SubmitButton";
+import { SuccessMessage } from "./SuccessMessage";
 
 export default function Popup() {
   const [content, setContent] = useState("");
@@ -27,23 +26,16 @@ export default function Popup() {
   const [error, setError] = useState<string | null>(null);
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [backendEndpoint, setBackendEndpoint] = useState("");
   const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    chrome.storage.sync.get(['endpoint'], (result) => {
-      setBackendEndpoint(result.endpoint || 'http://localhost:5230');
-    });
-  }, []);
-
   const handleFilesSelected = (files: File[]) => {
-    setSelectedFiles(prev => [...prev, ...files]);
+    setSelectedFiles((prev) => [...prev, ...files]);
   };
 
   const handleTagSelect = (tag: string) => {
     const inputTag = "#" + tag;
     const textField = textFieldRef.current;
-    
+
     if (textField) {
       const startAt = textField.selectionStart;
       const endAt = textField.selectionEnd;
@@ -68,13 +60,7 @@ export default function Popup() {
   };
 
   const handleRemoveFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleOpenMemo = (memo: Memo) => {
-    const uid = memo.uid;
-    const memoUrl = `${backendEndpoint}/m/${uid}`;
-    window.open(memoUrl, '_blank');
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmitStart = () => {
@@ -130,10 +116,10 @@ export default function Popup() {
               setContent={setContent}
               disabled={isLoading}
             />
-              <FileUploadButton
-                onFilesSelected={handleFilesSelected}
-                disabled={isLoading}
-              />
+            <FileUploadButton
+              onFilesSelected={handleFilesSelected}
+              disabled={isLoading}
+            />
           </Stack>
         </Paper>
 
@@ -142,12 +128,15 @@ export default function Popup() {
         {/* File List Section */}
         {selectedFiles.length > 0 && (
           <Paper variant="outlined" sx={{ p: 1 }}>
-            <List dense sx={{ 
-              maxHeight: 200,
-              overflowY: 'auto',
-              bgcolor: 'grey.50',
-              borderRadius: 1
-            }}>
+            <List
+              dense
+              sx={{
+                maxHeight: 200,
+                overflowY: "auto",
+                bgcolor: "grey.50",
+                borderRadius: 1,
+              }}
+            >
               {selectedFiles.map((file, index) => (
                 <FileItem
                   key={index}
@@ -180,30 +169,7 @@ export default function Popup() {
       )}
 
       {/* Success Message */}
-      {createdMemo && (
-        <Alert 
-          severity="success" 
-          sx={{ mt: 2 }}
-          action={
-            <Button
-              color="success"
-              size="small"
-              endIcon={<OpenInNewIcon />}
-              onClick={() => handleOpenMemo(createdMemo)}
-            >
-              Open
-            </Button>
-          }
-        >
-          <AlertTitle>Success</AlertTitle>
-          <Typography variant="body2">
-            Memo created successfully!
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            ID: {createdMemo.name}
-          </Typography>
-        </Alert>
-      )}
+      {createdMemo && <SuccessMessage memo={createdMemo} />}
     </Box>
   );
 }
