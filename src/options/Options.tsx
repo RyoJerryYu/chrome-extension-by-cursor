@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { resetMemosClient } from '../grpc/client';
+import { memoService } from '../services/memoService';
 import './Options.css';
 
 interface Settings {
@@ -8,12 +9,19 @@ interface Settings {
   tags: string[];
 }
 
+interface TagWithCount {
+  name: string;
+  count: number;
+}
+
 export default function Options() {
   const [endpoint, setEndpoint] = useState('');
   const [token, setToken] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [status, setStatus] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [fetchedTags, setFetchedTags] = useState<TagWithCount[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     // Load saved settings when component mounts
@@ -52,6 +60,32 @@ export default function Options() {
 
   const handleRemoveTag = (tagToRemove: string) => {
     setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
+  const handleFetchTags = async () => {
+    setIsFetching(true);
+    try {
+      const tagAmounts = await memoService.listTags();
+      const tagList = Object.entries(tagAmounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count); // Sort by count descending
+      setFetchedTags(tagList);
+    } catch (err) {
+      setStatus({ 
+        message: err instanceof Error ? err.message : 'Failed to fetch tags', 
+        type: 'error' 
+      });
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleImportTag = (tagName: string) => {
+    if (!tags.includes(tagName)) {
+      setTags([...tags, tagName]);
+      setStatus({ message: `Added tag: ${tagName}`, type: 'success' });
+      setTimeout(() => setStatus(null), 1500);
+    }
   };
 
   return (
@@ -115,6 +149,35 @@ export default function Options() {
               Add Tag
             </button>
           </div>
+        </div>
+
+        <div className="form-group">
+          <div className="fetch-tags-header">
+            <label>Import Tags from Server:</label>
+            <button 
+              type="button" 
+              className="btn-secondary"
+              onClick={handleFetchTags}
+              disabled={isFetching}
+            >
+              {isFetching ? 'Fetching...' : 'Fetch Tags'}
+            </button>
+          </div>
+          {fetchedTags.length > 0 && (
+            <div className="fetched-tags-container">
+              {fetchedTags.map(({name, count}) => (
+                <button
+                  key={name}
+                  type="button"
+                  className="fetched-tag"
+                  onClick={() => handleImportTag(name)}
+                  disabled={tags.includes(name)}
+                >
+                  {name} ({count})
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <button type="submit" className="btn-primary">

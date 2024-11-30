@@ -1,4 +1,4 @@
-import { CreateMemoRequest, Memo, Visibility } from '../../proto/src/proto/api/v1/memo_service';
+import { CreateMemoRequest, Memo, Visibility, ListMemoTagsRequest, ListMemoTagsResponse } from '../../proto/src/proto/api/v1/memo_service';
 import { getMemosClient } from '../grpc/client';
 
 export class MemoService {
@@ -10,6 +10,17 @@ export class MemoService {
     };
 
     return await client.memo.createMemo(request);
+  }
+
+  async listTags(): Promise<{[key: string]: number}> {
+    const client = await getMemosClient();
+    const request: ListMemoTagsRequest = {
+      parent: "memos/-", // List all tags
+      filter: "",  // No filter
+    };
+
+    const response = await client.memo.listMemoTags(request);
+    return response.tagAmounts;
   }
 }
 
