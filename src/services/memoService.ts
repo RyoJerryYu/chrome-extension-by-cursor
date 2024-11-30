@@ -5,7 +5,7 @@ export class MemoService {
   async createMemo(content: string): Promise<Memo> {
     const request: CreateMemoRequest = {
       content,
-      visibility: Visibility.PUBLIC,
+      visibility: Visibility.PRIVATE,
       resources: [],
       relations: [],
     };
