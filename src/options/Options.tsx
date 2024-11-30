@@ -1,7 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { 
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  Paper,
+  IconButton,
+  Chip,
+  Alert,
+  InputAdornment,
+  Divider,
+} from '@mui/material';
+import { 
+  Add as AddIcon,
+  Close as CloseIcon,
+  Tag as TagIcon,
+  Refresh as RefreshIcon,
+} from '@mui/icons-material';
 import { resetMemosClient } from '../grpc/client';
 import { memoService } from '../services/memoService';
-import './Options.css';
 
 interface Settings {
   endpoint: string;
@@ -24,7 +43,6 @@ export default function Options() {
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    // Load saved settings when component mounts
     chrome.storage.sync.get(['endpoint', 'token', 'tags'], (result) => {
       setEndpoint(result.endpoint || 'http://localhost:5230');
       setToken(result.token || '');
@@ -68,7 +86,7 @@ export default function Options() {
       const tagAmounts = await memoService.listTags();
       const tagList = Object.entries(tagAmounts)
         .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count); // Sort by count descending
+        .sort((a, b) => b.count - a.count);
       setFetchedTags(tagList);
     } catch (err) {
       setStatus({ 
@@ -89,106 +107,156 @@ export default function Options() {
   };
 
   return (
-    <div className="options-container">
-      <h1>Extension Settings</h1>
-      
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="endpoint">Backend Endpoint:</label>
-          <input
-            type="url"
-            id="endpoint"
-            value={endpoint}
-            onChange={(e) => setEndpoint(e.target.value)}
-            placeholder="https://your-backend-url"
-            required
-          />
-        </div>
+    <Container maxWidth="sm">
+      <Box sx={{ py: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Extension Settings
+        </Typography>
 
-        <div className="form-group">
-          <label htmlFor="token">Authentication Token:</label>
-          <input
-            type="password"
-            id="token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Your JWT token"
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <Stack spacing={3}>
+            {/* Connection Settings */}
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Stack spacing={2}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Connection Settings
+                </Typography>
 
-        <div className="form-group">
-          <label>Available Tags:</label>
-          <div className="tags-container">
-            {tags.map((tag) => (
-              <span key={tag} className="tag">
-                {tag}
-                <button 
-                  type="button" 
-                  className="tag-remove" 
-                  onClick={() => handleRemoveTag(tag)}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-          <div className="tag-input-container">
-            <input
-              type="text"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              placeholder="Add new tag"
-            />
-            <button 
-              type="button" 
-              className="btn-secondary"
-              onClick={handleAddTag}
+                <TextField
+                  label="Backend Endpoint"
+                  type="url"
+                  value={endpoint}
+                  onChange={(e) => setEndpoint(e.target.value)}
+                  placeholder="https://your-backend-url"
+                  required
+                  fullWidth
+                />
+
+                <TextField
+                  label="Authentication Token"
+                  type="password"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="Your JWT token"
+                  required
+                  fullWidth
+                />
+              </Stack>
+            </Paper>
+
+            {/* Tags Management */}
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Stack spacing={2}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  Tags Management
+                </Typography>
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {tags.map((tag) => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      onDelete={() => handleRemoveTag(tag)}
+                      size="small"
+                    />
+                  ))}
+                </Box>
+
+                <TextField
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  placeholder="Add new tag"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">#</InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton 
+                          onClick={handleAddTag}
+                          disabled={!newTag.trim()}
+                          size="small"
+                        >
+                          <AddIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag(e);
+                    }
+                  }}
+                />
+              </Stack>
+            </Paper>
+
+            {/* Server Tags */}
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Stack spacing={2}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <TagIcon color="action" />
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Server Tags
+                  </Typography>
+                  <Box sx={{ flex: 1 }} />
+                  <Button
+                    startIcon={<RefreshIcon />}
+                    onClick={handleFetchTags}
+                    disabled={isFetching}
+                    size="small"
+                  >
+                    {isFetching ? "Fetching..." : "Fetch Tags"}
+                  </Button>
+                </Box>
+
+                {fetchedTags.length > 0 && (
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    gap: 0.5,
+                    maxHeight: 200,
+                    overflowY: 'auto',
+                    p: 1,
+                    bgcolor: 'grey.50',
+                    borderRadius: 1
+                  }}>
+                    {fetchedTags.map(({name, count}) => (
+                      <Chip
+                        key={name}
+                        label={`${name} (${count})`}
+                        size="small"
+                        onClick={() => handleImportTag(name)}
+                        disabled={tags.includes(name)}
+                        variant="outlined"
+                      />
+                    ))}
+                  </Box>
+                )}
+              </Stack>
+            </Paper>
+
+            <Button 
+              type="submit" 
+              variant="contained"
+              size="large"
             >
-              Add Tag
-            </button>
-          </div>
-        </div>
+              Save Settings
+            </Button>
+          </Stack>
+        </form>
 
-        <div className="form-group">
-          <div className="fetch-tags-header">
-            <label>Import Tags from Server:</label>
-            <button 
-              type="button" 
-              className="btn-secondary"
-              onClick={handleFetchTags}
-              disabled={isFetching}
-            >
-              {isFetching ? 'Fetching...' : 'Fetch Tags'}
-            </button>
-          </div>
-          {fetchedTags.length > 0 && (
-            <div className="fetched-tags-container">
-              {fetchedTags.map(({name, count}) => (
-                <button
-                  key={name}
-                  type="button"
-                  className="fetched-tag"
-                  onClick={() => handleImportTag(name)}
-                  disabled={tags.includes(name)}
-                >
-                  {name} ({count})
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <button type="submit" className="btn-primary">
-          Save Settings
-        </button>
-      </form>
-
-      {status && (
-        <div className={`status-message ${status.type}`}>
-          {status.message}
-        </div>
-      )}
-    </div>
+        {status && (
+          <Alert 
+            severity={status.type} 
+            sx={{ mt: 2 }}
+            onClose={() => setStatus(null)}
+          >
+            {status.message}
+          </Alert>
+        )}
+      </Box>
+    </Container>
   );
 } 
