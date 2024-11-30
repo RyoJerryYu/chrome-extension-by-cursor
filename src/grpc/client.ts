@@ -2,7 +2,7 @@ import { createChannel, createClientFactory, FetchTransport } from "nice-grpc-we
 import { MemoServiceDefinition } from "../../proto/src/proto/api/v1/memo_service";
 
 const channel = createChannel(
-  'http://localhost:8080',  // Update this to your backend URL
+  'http://localhost:5230',  // Update this to your backend URL
   FetchTransport({
     credentials: "include",
   })
