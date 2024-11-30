@@ -3,11 +3,13 @@ import {
   Box, 
   Chip, 
   Typography, 
-  Button,
   Stack,
-  Paper 
+  Paper,
+  IconButton,
+  Tooltip 
 } from '@mui/material';
 import TagIcon from '@mui/icons-material/Tag';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { memoService } from "../services/memoService";
 
 interface ServerTag {
@@ -93,13 +95,17 @@ export function TagSelector({
           <Typography variant="caption" color="text.secondary">
             Tags
           </Typography>
-          <Button
-            size="small"
-            onClick={handleFetchTags}
-            disabled={isFetchingTags || disabled}
-          >
-            {isFetchingTags ? "Refreshing..." : "Fetch Server Tags"}
-          </Button>
+          <Tooltip title={isFetchingTags ? "Refreshing..." : "Fetch Server Tags"}>
+            <span>
+              <IconButton
+                size="small"
+                onClick={handleFetchTags}
+                disabled={isFetchingTags || disabled}
+              >
+                <RefreshIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
         </Box>
         <Box sx={{ 
           display: 'flex', 
