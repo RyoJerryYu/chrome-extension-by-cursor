@@ -3,7 +3,6 @@ import {
   Box, 
   Typography, 
   TextField, 
-  IconButton,
   Stack,
   Paper,
   Alert,
@@ -12,7 +11,6 @@ import {
   Button,
   Tooltip,
 } from '@mui/material';
-import AddTaskIcon from '@mui/icons-material/AddTask';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import { memoService } from "../services/memoService";
@@ -23,6 +21,7 @@ import { TagSelector } from "./TagSelector";
 import { FileUploadButton } from "./FileUploadButton";
 import { FileItem } from "./FileItem";
 import { InsertPageButton } from "./InsertPageButton";
+import { InsertTaskButton } from "./InsertTaskButton";
 
 export default function Popup() {
   const [content, setContent] = useState("");
@@ -119,35 +118,6 @@ export default function Popup() {
     window.open(memoUrl, '_blank');
   };
 
-  const insertTask = () => {
-    const textField = textFieldRef.current;
-    if (textField) {
-      const startAt = textField.selectionStart;
-      let start = content.substring(0, startAt).trimEnd();
-      let end = content.substring(startAt).trimStart();
-      
-      if (start.length !== 0 && !start.endsWith('\n')) {
-        start += '\n';
-      }
-      
-      if (end.length !== 0 && !end.startsWith('\n')) {
-        end = '\n' + end;
-      }
-      
-      const taskText = "- [ ] ";
-      const newContent = start + taskText + end;
-      const cursorAt = start.length + taskText.length;
-      
-      setContent(newContent);
-      setTimeout(() => {
-        textField.focus();
-        textField.setSelectionRange(cursorAt, cursorAt);
-      }, 0);
-    } else {
-      setContent(content + "- [ ] ");
-    }
-  };
-
   return (
     <Box sx={{ width: 400, p: 2 }}>
       <Typography variant="h6" gutterBottom>
@@ -176,16 +146,12 @@ export default function Popup() {
               setContent={setContent}
               disabled={isLoading}
             />
-            <Tooltip title="Add Task Checkbox">
-              <IconButton
-                onClick={insertTask}
-                disabled={isLoading}
-                color="primary"
-                size="small"
-              >
-                <AddTaskIcon />
-              </IconButton>
-            </Tooltip>
+            <InsertTaskButton
+              textFieldRef={textFieldRef}
+              content={content}
+              setContent={setContent}
+              disabled={isLoading}
+            />
             <Tooltip title="Attach Files">
               <FileUploadButton
                 onFilesSelected={handleFilesSelected}
