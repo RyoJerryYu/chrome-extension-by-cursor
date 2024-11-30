@@ -1,4 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
+import { 
+  Box, 
+  Typography, 
+  TextField, 
+  Button, 
+  IconButton,
+  Stack,
+  Paper,
+  Alert,
+  AlertTitle,
+  Chip,
+} from '@mui/material';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import LinkIcon from '@mui/icons-material/Link';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import CloseIcon from '@mui/icons-material/Close';
+import TagIcon from '@mui/icons-material/Tag';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
 import { memoService } from "../services/memoService";
 import { resourceService } from "../services/resourceService";
 import { Memo } from "../../proto/src/proto/api/v1/memo_service";
@@ -190,128 +209,161 @@ export default function Popup() {
   };
 
   return (
-    <div className="popup-container">
-      <h1 className="text-xl font-bold mb-4">Create Memo</h1>
+    <Box sx={{ width: 400, p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Create Memo
+      </Typography>
 
-      <div className="tags-section">
+      <Stack spacing={2}>
         <TagSelector onSelectTag={handleTagSelect} />
 
-        <div className="server-tags">
-          <button
-            type="button"
-            className="fetch-tags-button"
-            onClick={handleFetchTags}
-            disabled={isFetchingTags}
+        {/* Server Tags Section */}
+        <Paper variant="outlined" sx={{ p: 1 }}>
+          <Stack spacing={1}>
+            <Button
+              startIcon={<TagIcon />}
+              onClick={handleFetchTags}
+              disabled={isFetchingTags}
+              variant="outlined"
+              fullWidth
+            >
+              {isFetchingTags ? "Fetching..." : "Fetch Server Tags"}
+            </Button>
+
+            {serverTags.length > 0 && (
+              <Box sx={{ 
+                display: 'flex', 
+                flexWrap: 'wrap', 
+                gap: 0.5,
+                maxHeight: 120,
+                overflowY: 'auto',
+                p: 1,
+                bgcolor: 'grey.50',
+                borderRadius: 1
+              }}>
+                {serverTags.map(({ name, count }) => (
+                  <Chip
+                    key={name}
+                    label={`${name} (${count})`}
+                    size="small"
+                    onClick={() => handleTagSelect(name)}
+                    variant="outlined"
+                  />
+                ))}
+              </Box>
+            )}
+          </Stack>
+        </Paper>
+
+        {/* Action Buttons */}
+        <Stack direction="row" spacing={1}>
+          <Button
+            startIcon={<LinkIcon />}
+            variant="outlined"
+            onClick={insertCurrentPage}
+            fullWidth
           >
-            {isFetchingTags ? "Fetching..." : "Fetch Server Tags"}
-          </button>
+            Insert Page
+          </Button>
+          <Button
+            startIcon={<AddTaskIcon />}
+            variant="outlined"
+            onClick={insertTask}
+            fullWidth
+          >
+            Add Task
+          </Button>
+        </Stack>
 
-          {serverTags.length > 0 && (
-            <div className="server-tags-list">
-              {serverTags.map(({ name, count }) => (
-                <button
-                  key={name}
-                  type="button"
-                  className="server-tag"
-                  onClick={() => handleTagSelect(name)}
-                >
-                  {name} ({count})
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="actions-section mb-2">
-        <button
-          type="button"
-          className="action-button"
-          onClick={insertCurrentPage}
-        >
-          Insert Current Page
-        </button>
-        <button
-          type="button"
-          className="action-button"
-          onClick={insertTask}
-        >
-          Add Task
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        <textarea
-          className="w-full p-2 border rounded mb-2 min-h-[100px]"
+        {/* Main Content */}
+        <TextField
+          multiline
+          minRows={4}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Enter your memo content..."
           disabled={isLoading}
+          fullWidth
         />
 
-        <div className="file-section mb-2">
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={handleFileClick}
-            className="file-button"
-            disabled={isLoading}
-          >
-            {selectedFile ? selectedFile.name : "Attach File"}
-          </button>
-          {selectedFile && (
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedFile(null);
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = '';
-                }
-              }}
-              className="remove-file"
+        {/* File Upload Section */}
+        <Paper variant="outlined" sx={{ p: 1 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+            />
+            <Button
+              startIcon={<AttachFileIcon />}
+              variant="text"
+              onClick={handleFileClick}
+              disabled={isLoading}
+              fullWidth
             >
-              ×
-            </button>
-          )}
-        </div>
+              {selectedFile ? selectedFile.name : "Attach File"}
+            </Button>
+            {selectedFile && (
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setSelectedFile(null);
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                  }
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            )}
+          </Stack>
+        </Paper>
 
-        <button
-          type="submit"
+        {/* Submit Button */}
+        <Button
+          variant="contained"
           disabled={isLoading || !content.trim()}
-          className="btn-primary"
+          onClick={handleSubmit}
+          fullWidth
         >
           {isLoading ? (isUploading ? "Uploading..." : "Creating...") : "Create Memo"}
-        </button>
-      </form>
+        </Button>
+      </Stack>
 
+      {/* Error Message */}
       {error && (
-        <div className="mt-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
+        <Alert severity="error" sx={{ mt: 2 }}>
+          <AlertTitle>Error</AlertTitle>
           {error}
-        </div>
+        </Alert>
       )}
 
+      {/* Success Message */}
       {createdMemo && (
-        <div className="mt-4 p-2 bg-green-100 border border-green-400 text-green-700 rounded">
-          <div className="flex items-center justify-between">
-            <div>
-              <p>Memo created successfully!</p>
-              <p className="text-sm mt-1">ID: {createdMemo.name}</p>
-            </div>
-            <button
-              type="button"
-              className="open-memo-button"
+        <Alert 
+          severity="success" 
+          sx={{ mt: 2 }}
+          action={
+            <Button
+              color="success"
+              size="small"
+              endIcon={<OpenInNewIcon />}
               onClick={() => handleOpenMemo(createdMemo)}
             >
-              Open Memo
-            </button>
-          </div>
-        </div>
+              Open
+            </Button>
+          }
+        >
+          <AlertTitle>Success</AlertTitle>
+          <Typography variant="body2">
+            Memo created successfully!
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            ID: {createdMemo.name}
+          </Typography>
+        </Alert>
       )}
-    </div>
+    </Box>
   );
 }
