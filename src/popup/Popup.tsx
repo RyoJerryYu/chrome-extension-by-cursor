@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { memoService } from "../services/memoService";
 import { resourceService } from "../services/resourceService";
 import { Memo } from "../../proto/src/proto/api/v1/memo_service";
@@ -20,6 +20,13 @@ export default function Popup() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [backendEndpoint, setBackendEndpoint] = useState("");
+
+  useEffect(() => {
+    chrome.storage.sync.get(['endpoint'], (result) => {
+      setBackendEndpoint(result.endpoint || 'http://localhost:5230');
+    });
+  }, []);
 
   const handleTagSelect = (tag: string) => {
     const inputTag = "#" + tag;
@@ -144,6 +151,13 @@ export default function Popup() {
     }
   };
 
+  const handleOpenMemo = (memo: Memo) => {
+    // Extract UID from memo.name (format: "memos/{uid}")
+    const uid = memo.uid;
+    const memoUrl = `${backendEndpoint}/m/${uid}`;
+    window.open(memoUrl, '_blank');
+  };
+
   return (
     <div className="popup-container">
       <h1 className="text-xl font-bold mb-4">Create Memo</h1>
@@ -245,8 +259,19 @@ export default function Popup() {
 
       {createdMemo && (
         <div className="mt-4 p-2 bg-green-100 border border-green-400 text-green-700 rounded">
-          <p>Memo created successfully!</p>
-          <p className="text-sm mt-1">ID: {createdMemo.name}</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <p>Memo created successfully!</p>
+              <p className="text-sm mt-1">ID: {createdMemo.name}</p>
+            </div>
+            <button
+              type="button"
+              className="open-memo-button"
+              onClick={() => handleOpenMemo(createdMemo)}
+            >
+              Open Memo
+            </button>
+          </div>
         </div>
       )}
     </div>

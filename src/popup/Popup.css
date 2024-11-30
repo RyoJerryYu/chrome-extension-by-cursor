@@ -167,4 +167,33 @@ button:disabled {
 
 .action-button:hover {
   background-color: #4b5563;
+}
+
+.open-memo-button {
+  padding: 0.5rem 1rem;
+  background-color: #059669;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.open-memo-button:hover {
+  background-color: #047857;
+}
+
+/* Update success message container */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
 } 
