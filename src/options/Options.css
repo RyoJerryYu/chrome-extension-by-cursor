@@ -66,4 +66,56 @@ input:focus {
   background-color: #fee2e2;
   color: #991b1b;
   border: 1px solid #fecaca;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background: #e5e7eb;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  margin-left: 4px;
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 16px;
+  color: #666;
+}
+
+.tag-remove:hover {
+  color: #ef4444;
+}
+
+.tag-input-container {
+  display: flex;
+  gap: 8px;
+}
+
+.tag-input-container input {
+  flex: 1;
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
 } 

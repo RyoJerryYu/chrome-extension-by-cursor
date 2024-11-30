@@ -1,0 +1,20 @@
+.tag-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.tag-button {
+  background: #e5e7eb;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tag-button:hover {
+  background: #d1d5db;
+} 

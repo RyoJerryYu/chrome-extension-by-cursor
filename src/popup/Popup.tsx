@@ -1,12 +1,30 @@
 import React, { useState } from 'react';
 import { memoService } from '../services/memoService';
 import { Memo } from '../../proto/src/proto/api/v1/memo_service';
+import { TagSelector } from './TagSelector';
 
 export default function Popup() {
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
+
+  const handleTagSelect = (tag: string) => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newContent = content.substring(0, start) + tag + content.substring(end);
+      setContent(newContent);
+      // Set cursor position after the inserted tag
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + tag.length, start + tag.length);
+      }, 0);
+    } else {
+      setContent(content + tag);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +45,8 @@ export default function Popup() {
   return (
     <div className="popup-container">
       <h1 className="text-xl font-bold mb-4">Create Memo</h1>
+      
+      <TagSelector onSelectTag={handleTagSelect} />
       
       <form onSubmit={handleSubmit}>
         <textarea
