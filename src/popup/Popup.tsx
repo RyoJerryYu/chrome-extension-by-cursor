@@ -13,7 +13,6 @@ import {
   Tooltip,
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import LinkIcon from '@mui/icons-material/Link';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import { memoService } from "../services/memoService";
@@ -23,6 +22,7 @@ import { Resource } from "../../proto/src/proto/api/v1/resource_service";
 import { TagSelector } from "./TagSelector";
 import { FileUploadButton } from "./FileUploadButton";
 import { FileItem } from "./FileItem";
+import { InsertPageButton } from "./InsertPageButton";
 
 export default function Popup() {
   const [content, setContent] = useState("");
@@ -113,39 +113,6 @@ export default function Popup() {
     }
   };
 
-  const insertCurrentPage = async () => {
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab.url && tab.title) {
-        const markdownLink = `[${tab.title}](${tab.url})`;
-        const textField = textFieldRef.current;
-        if (textField) {
-          const startAt = textField.selectionStart;
-          const endAt = textField.selectionEnd;
-          let start = content.substring(0, startAt).trimEnd();
-          if (start.length !== 0) {
-            start += " ";
-          }
-          let end = content.substring(endAt).trimStart();
-          if (end.length !== 0) {
-            end = " " + end;
-          }
-          const newContent = start + markdownLink + end;
-          const cursorAt = start.length + markdownLink.length;
-          setContent(newContent);
-          setTimeout(() => {
-            textField.focus();
-            textField.setSelectionRange(cursorAt, cursorAt);
-          }, 0);
-        } else {
-          setContent(content + markdownLink);
-        }
-      }
-    } catch (err) {
-      console.error('Failed to get current tab:', err);
-    }
-  };
-
   const handleOpenMemo = (memo: Memo) => {
     const uid = memo.uid;
     const memoUrl = `${backendEndpoint}/m/${uid}`;
@@ -203,16 +170,12 @@ export default function Popup() {
         {/* Action Buttons */}
         <Paper variant="outlined" sx={{ p: 1 }}>
           <Stack direction="row" spacing={1} justifyContent="flex-start">
-            <Tooltip title="Insert Current Page">
-              <IconButton
-                onClick={insertCurrentPage}
-                disabled={isLoading}
-                color="primary"
-                size="small"
-              >
-                <LinkIcon />
-              </IconButton>
-            </Tooltip>
+            <InsertPageButton
+              textFieldRef={textFieldRef}
+              content={content}
+              setContent={setContent}
+              disabled={isLoading}
+            />
             <Tooltip title="Add Task Checkbox">
               <IconButton
                 onClick={insertTask}
