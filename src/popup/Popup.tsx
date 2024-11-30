@@ -203,7 +203,16 @@ export default function Popup() {
       </Typography>
 
       <Stack spacing={2}>
-        <TagSelector onSelectTag={handleTagSelect} />
+        {/* Main Content */}
+        <TextField
+          multiline
+          minRows={4}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Enter your memo content..."
+          disabled={isLoading}
+          fullWidth
+        />
 
         {/* Action Buttons */}
         <Paper variant="outlined" sx={{ p: 1 }}>
@@ -248,16 +257,7 @@ export default function Popup() {
           </Stack>
         </Paper>
 
-        {/* Main Content */}
-        <TextField
-          multiline
-          minRows={4}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Enter your memo content..."
-          disabled={isLoading}
-          fullWidth
-        />
+        <TagSelector onSelectTag={handleTagSelect} />
 
         {/* File List Section */}
         {selectedFiles.length > 0 && (
