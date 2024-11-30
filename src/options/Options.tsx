@@ -158,6 +158,7 @@ export default function Options() {
                       label={tag}
                       onDelete={() => handleRemoveTag(tag)}
                       size="small"
+                      icon={<TagIcon />}
                     />
                   ))}
                 </Box>
@@ -230,6 +231,7 @@ export default function Options() {
                         onClick={() => handleImportTag(name)}
                         disabled={tags.includes(name)}
                         variant="outlined"
+                        icon={<TagIcon />}
                       />
                     ))}
                   </Box>
