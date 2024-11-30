@@ -152,12 +152,10 @@ export default function Popup() {
               setContent={setContent}
               disabled={isLoading}
             />
-            <Tooltip title="Attach Files">
               <FileUploadButton
                 onFilesSelected={handleFilesSelected}
                 disabled={isLoading}
               />
-            </Tooltip>
           </Stack>
         </Paper>
 

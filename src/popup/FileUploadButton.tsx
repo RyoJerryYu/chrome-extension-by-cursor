@@ -1,13 +1,16 @@
-import React, { useRef } from 'react';
-import { IconButton } from '@mui/material';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import React, { useRef } from "react";
+import { IconButton, Tooltip } from "@mui/material";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface FileUploadButtonProps {
   onFilesSelected: (files: File[]) => void;
   disabled?: boolean;
 }
 
-export function FileUploadButton({ onFilesSelected, disabled = false }: FileUploadButtonProps) {
+export function FileUploadButton({
+  onFilesSelected,
+  disabled = false,
+}: FileUploadButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,7 +19,7 @@ export function FileUploadButton({ onFilesSelected, disabled = false }: FileUplo
       onFilesSelected(files);
       // Reset input value so the same file can be selected again
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
     }
   };
@@ -27,21 +30,23 @@ export function FileUploadButton({ onFilesSelected, disabled = false }: FileUplo
 
   return (
     <>
-      <IconButton
-        onClick={handleClick}
-        disabled={disabled}
-        color="primary"
-        size="small"
-      >
-        <AttachFileIcon />
-      </IconButton>
+      <Tooltip title="Attach Files">
+        <IconButton
+          onClick={handleClick}
+          disabled={disabled}
+          color="primary"
+          size="small"
+        >
+          <AttachFileIcon />
+        </IconButton>
+      </Tooltip>
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileSelect}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         multiple
       />
     </>
   );
-} 
+}
