@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Box, 
   Typography, 
@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import LinkIcon from '@mui/icons-material/Link';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
@@ -26,6 +25,7 @@ import { resourceService } from "../services/resourceService";
 import { Memo } from "../../proto/src/proto/api/v1/memo_service";
 import { Resource } from "../../proto/src/proto/api/v1/resource_service";
 import { TagSelector } from "./TagSelector";
+import { FileUploadButton } from "./FileUploadButton";
 
 export default function Popup() {
   const [content, setContent] = useState("");
@@ -34,7 +34,6 @@ export default function Popup() {
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [backendEndpoint, setBackendEndpoint] = useState("");
 
   useEffect(() => {
@@ -42,6 +41,11 @@ export default function Popup() {
       setBackendEndpoint(result.endpoint || 'http://localhost:5230');
     });
   }, []);
+
+  const handleFilesSelected = (files: File[]) => {
+    setSelectedFiles(prev => [...prev, ...files]);
+    setError(null);
+  };
 
   const handleTagSelect = (tag: string) => {
     const inputTag = "#" + tag;
@@ -69,23 +73,8 @@ export default function Popup() {
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      setSelectedFiles(prev => [...prev, ...files]);
-      setError(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-
   const handleRemoveFile = (index: number) => {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const handleFileClick = () => {
-    fileInputRef.current?.click();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,9 +107,6 @@ export default function Popup() {
       setCreatedMemo(memo);
       setContent("");
       setSelectedFiles([]);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create memo");
     } finally {
@@ -238,22 +224,11 @@ export default function Popup() {
               </IconButton>
             </Tooltip>
             <Tooltip title="Attach Files">
-              <IconButton
-                onClick={handleFileClick}
+              <FileUploadButton
+                onFilesSelected={handleFilesSelected}
                 disabled={isLoading}
-                color="primary"
-                size="small"
-              >
-                <AttachFileIcon />
-              </IconButton>
+              />
             </Tooltip>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-              multiple
-            />
           </Stack>
         </Paper>
 
