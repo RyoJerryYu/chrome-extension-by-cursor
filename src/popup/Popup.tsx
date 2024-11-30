@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { memoService } from "../services/memoService";
+import { resourceService } from "../services/resourceService";
 import { Memo } from "../../proto/src/proto/api/v1/memo_service";
+import { Resource } from "../../proto/src/proto/api/v1/resource_service";
 import { TagSelector } from "./TagSelector";
 
 interface ServerTag {
@@ -15,6 +17,9 @@ export default function Popup() {
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
   const [serverTags, setServerTags] = useState<ServerTag[]>([]);
   const [isFetchingTags, setIsFetchingTags] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTagSelect = (tag: string) => {
     const inputTag = "#" + tag;
@@ -58,15 +63,47 @@ export default function Popup() {
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setError(null);
+    }
+  };
+
+  const handleFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
+    
     try {
+      // First create the memo
       const memo = await memoService.createMemo(content);
+
+      // If there's a file selected, upload it and attach to memo
+      if (selectedFile) {
+        setIsUploading(true);
+        try {
+          const resource = await resourceService.createResource(selectedFile);
+          await memoService.setMemoResources(memo.name, [resource]);
+        } catch (err) {
+          console.error('Failed to upload file:', err);
+          // Don't fail the whole operation if file upload fails
+        } finally {
+          setIsUploading(false);
+        }
+      }
+
       setCreatedMemo(memo);
       setContent("");
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create memo");
     } finally {
@@ -117,12 +154,43 @@ export default function Popup() {
           disabled={isLoading}
         />
 
+        <div className="file-section mb-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={handleFileClick}
+            className="file-button"
+            disabled={isLoading}
+          >
+            {selectedFile ? selectedFile.name : "Attach File"}
+          </button>
+          {selectedFile && (
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedFile(null);
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
+              }}
+              className="remove-file"
+            >
+              ×
+            </button>
+          )}
+        </div>
+
         <button
           type="submit"
           disabled={isLoading || !content.trim()}
           className="btn-primary"
         >
-          {isLoading ? "Creating..." : "Create Memo"}
+          {isLoading ? (isUploading ? "Uploading..." : "Creating...") : "Create Memo"}
         </button>
       </form>
 

@@ -101,4 +101,48 @@ button:disabled {
 .server-tag:hover {
   background: #f8fafc;
   border-color: #3b82f6;
+}
+
+.file-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-button {
+  flex: 1;
+  padding: 0.5rem;
+  background-color: #f3f4f6;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.25rem;
+  color: #374151;
+  cursor: pointer;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-button:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.file-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.remove-file {
+  padding: 4px 8px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.remove-file:hover {
+  background: #dc2626;
 } 
