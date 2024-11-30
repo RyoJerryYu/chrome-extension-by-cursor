@@ -9,6 +9,10 @@ import {
   Paper,
   Alert,
   AlertTitle,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
 } from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import LinkIcon from '@mui/icons-material/Link';
@@ -27,7 +31,7 @@ export default function Popup() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdMemo, setCreatedMemo] = useState<Memo | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [backendEndpoint, setBackendEndpoint] = useState("");
@@ -65,11 +69,18 @@ export default function Popup() {
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setSelectedFiles(prev => [...prev, ...files]);
       setError(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleFileClick = () => {
@@ -85,14 +96,18 @@ export default function Popup() {
       // First create the memo
       const memo = await memoService.createMemo(content);
 
-      // If there's a file selected, upload it and attach to memo
-      if (selectedFile) {
+      // If there are files selected, upload them and attach to memo
+      if (selectedFiles.length > 0) {
         setIsUploading(true);
         try {
-          const resource = await resourceService.createResource(selectedFile);
-          await memoService.setMemoResources(memo.name, [resource]);
+          const resources: Resource[] = [];
+          for (const file of selectedFiles) {
+            const resource = await resourceService.createResource(file);
+            resources.push(resource);
+          }
+          await memoService.setMemoResources(memo.name, resources);
         } catch (err) {
-          console.error('Failed to upload file:', err);
+          console.error('Failed to upload files:', err);
           // Don't fail the whole operation if file upload fails
         } finally {
           setIsUploading(false);
@@ -101,7 +116,7 @@ export default function Popup() {
 
       setCreatedMemo(memo);
       setContent("");
-      setSelectedFile(null);
+      setSelectedFiles([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -146,7 +161,6 @@ export default function Popup() {
   };
 
   const handleOpenMemo = (memo: Memo) => {
-    // Extract UID from memo.name (format: "memos/{uid}")
     const uid = memo.uid;
     const memoUrl = `${backendEndpoint}/m/${uid}`;
     window.open(memoUrl, '_blank');
@@ -159,12 +173,10 @@ export default function Popup() {
       let start = content.substring(0, startAt).trimEnd();
       let end = content.substring(startAt).trimStart();
       
-      // Add newline before task if we're not at the start of content
       if (start.length !== 0 && !start.endsWith('\n')) {
         start += '\n';
       }
       
-      // Add newline after task if there's content after
       if (end.length !== 0 && !end.startsWith('\n')) {
         end = '\n' + end;
       }
@@ -225,34 +237,53 @@ export default function Popup() {
 
         {/* File Upload Section */}
         <Paper variant="outlined" sx={{ p: 1 }}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-            />
-            <Button
-              startIcon={<AttachFileIcon />}
-              variant="text"
-              onClick={handleFileClick}
-              disabled={isLoading}
-              fullWidth
-            >
-              {selectedFile ? selectedFile.name : "Attach File"}
-            </Button>
-            {selectedFile && (
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setSelectedFile(null);
-                  if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                  }
-                }}
+          <Stack spacing={1}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+                multiple
+              />
+              <Button
+                startIcon={<AttachFileIcon />}
+                variant="text"
+                onClick={handleFileClick}
+                disabled={isLoading}
+                fullWidth
               >
-                <CloseIcon />
-              </IconButton>
+                Attach Files
+              </Button>
+            </Stack>
+
+            {selectedFiles.length > 0 && (
+              <List dense sx={{ 
+                maxHeight: 100, 
+                overflowY: 'auto',
+                bgcolor: 'grey.50',
+                borderRadius: 1
+              }}>
+                {selectedFiles.map((file, index) => (
+                  <ListItem key={index} sx={{ py: 0 }}>
+                    <ListItemText 
+                      primary={file.name}
+                      secondary={`${(file.size / 1024).toFixed(1)} KB`}
+                      primaryTypographyProps={{ variant: 'body2' }}
+                      secondaryTypographyProps={{ variant: 'caption' }}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        size="small"
+                        onClick={() => handleRemoveFile(index)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
             )}
           </Stack>
         </Paper>
